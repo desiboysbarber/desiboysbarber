@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desi Boys Barber | Harris Park</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+        }
+        
+        h1, h2, h3, h4, .brand-font {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+        }
+        
+        .hero-pattern {
+            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Cart Animation */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .pop-anim {
+            animation: pop 0.3s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #334155;
+            border-radius: 10px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background-color: #1e293b;
+        }
+
+        /* Custom Checkbox/Radio Styling */
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #eab308; /* Yellow 500 */
+        }
+    </style>
+</head>
+<body class="antialiased relative">
+
+    <nav class="bg-slate-900/95 backdrop-blur-md shadow-md shadow-black/50 fixed w-full z-40 top-0 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <span class="brand-font font-bold text-3xl tracking-wide text-white flex items-center gap-3">
+                        <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-slate-900 text-xl">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <span class="text-yellow-500">DESI BOYS</span> BARBER
+                        </div>
+                    </span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#about" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">The Shop</a>
+                    <a href="#services" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">Services</a>
+                    <a href="#location" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">Location</a>
+                    <a href="#services" class="bg-yellow-500 text-slate-900 px-7 py-2.5 rounded-sm brand-font font-bold text-lg hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
+                        Book Appointment
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero-pattern h-[80vh] flex items-center justify-center mt-20 relative">
+        <div class="text-center px-4 z-10 w-full max-w-4xl">
+            <span class="uppercase tracking-[0.4em] text-sm font-bold mb-4 block text-yellow-500">Harris Park, NSW</span>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white tracking-wide">Fresh Fades.<br>Sharp Lines.</h1>
+            <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light text-slate-300">Premium men's grooming, beard sculpting, and traditional threading. Walk in or secure your spot online.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#services" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-4 px-10 rounded-sm transition transform hover:-translate-y-1 shadow-xl shadow-yellow-500/20">
+                    View Services & Book
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="py-24 bg-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4 text-white tracking-wide">The Barber Lane Standard</h2>
+                <div class="w-20 h-1 bg-yellow-500 mx-auto"></div>
+                <p class="mt-6 text-slate-400 max-w-2xl mx-auto text-lg">We bring precision and style to every cut. Whether you need a quick crew cut or a full facial and head massage, we've got you covered.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-8 bg-slate-800 rounded-sm border border-slate-700 hover:border-yellow-500/50 transition duration-300 group">
+                    <div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-500 text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-white">Precision Cuts</h3>
+                    <p class="text-slate-400 leading-relaxed text-sm">From standard style cuts to flawless skin fades. Our barbers pay attention to every detail.</p>
+                </div>
+                
+                <div class="text-center p-8 bg-slate-800 rounded-sm border border-slate-700 hover:border-yellow-500/50 transition duration-300 group">
+                    <div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-500 text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-white">Grooming & Facials</h3>
+                    <p class="text-slate-400 leading-relaxed text-sm">Relax with our head massages, scrubs, and full facials designed to rejuvenate your skin.</p>
+                </div>
+
+                <div class="text-center p-8 bg-slate-800 rounded-sm border border-slate-700 hover:border-yellow-500/50 transition duration-300 group">
+                    <div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-500 text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-white">Threading Experts</h3>
+                    <p class="text-slate-400 leading-relaxed text-sm">Precise threading for eyebrows, forehead, cheeks, or full face for clean, sharp results.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="services" class="py-24 bg-slate-950 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-bold mb-4 text-white tracking-wide">Select Services</h2>
+                    <p class="text-slate-400 text-lg">Walk-ins welcome. Booking online incurs a standard $10 appointment charge.</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <span id="shopStatus" class="inline-flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-sm text-slate-300 text-sm font-semibold transition-colors duration-300 shadow-inner">
+                        <i class="fas fa-circle text-green-500 text-[10px] mr-2"></i> Shop is Open
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 relative">
+                
+                <!-- Services Menu Grid -->
+                <div class="lg:w-2/3">
+                    
+                    <!-- Category: Men's Haircut -->
+                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
+                        <h3 class="text-2xl font-bold text-white tracking-wide">Mens Haircut</h3>
+                    </div>
+                    <div id="grid-haircuts" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Crew Cut</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Simple, clean, and classic machine cut.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Crew Cut', 15.00, 'haircut')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+                        
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Style Hair Cut</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Standard scissors/clipper cut customized to your style.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Style Hair Cut', 20.00, 'haircut')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-yellow-500 text-slate-900 text-[10px] font-bold px-2 py-1 uppercase tracking-wider">Popular</div>
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Fades</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$25.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Starts at $25. Zero, skin, or taper fades for a seamless blend.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Fades', 25.00, 'fade')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Only Scissors Cut</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$30.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Complete precision cut using scissors only.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Only Scissors Cut', 30.00, 'haircut')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
+                        <h3 class="text-2xl font-bold text-white tracking-wide">Beard & Grooming</h3>
+                    </div>
+                    <div id="grid-grooming" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Beard Line Up</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$10.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Beard Line Up', 10.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+                        
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Beard Trimming</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Beard Trimming', 15.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Full Beard</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Complete sculpt and trim for a full beard.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Full Beard', 20.00, 'grooming')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Colour</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$25.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Hair or beard color application.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Colour', 25.00, 'grooming')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Scrub</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Scrub', 20.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Head Massage</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Head Massage', 20.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md sm:col-span-2 lg:col-span-1">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Facial</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$70.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Premium facial treatment for deep cleansing and relaxation.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Facial', 70.00, 'grooming')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
+                        <h3 class="text-2xl font-bold text-white tracking-wide">Women Cut & Threading</h3>
+                    </div>
+                    <div id="grid-threading" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md sm:col-span-2">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Women Cut</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">From $25.00</span>
+                                </div>
+                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Professional women's styling and cuts.</p>
+                            </div>
+                            <button onclick="openCustomizationModal('Women Cut', 25.00, 'womens')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Eyebrows Threading</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$10.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Eyebrows Threading', 10.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+                        
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Forehead Threading</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$10.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Forehead Threading', 10.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Cheeks Threading</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Cheeks Threading', 15.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+
+                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
+                            <div>
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Full Face Threading</h4>
+                                    <span class="font-bold text-yellow-500 text-lg">$30.00</span>
+                                </div>
+                            </div>
+                            <button onclick="openCustomizationModal('Full Face Threading', 30.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="lg:w-1/3">
+                    <div class="bg-slate-900 p-6 rounded-sm border border-slate-700 sticky top-24 shadow-2xl">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
+                            <h3 class="font-bold text-2xl text-white brand-font tracking-wide">Your Booking</h3>
+                            <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-xs font-bold px-3 py-1 rounded-sm"><span id="cartCount">0</span> Items</span>
+                        </div>
+
+                        <!-- Cart Items -->
+                        <div id="cartItems" class="min-h-[150px] max-h-[400px] overflow-y-auto mb-6 space-y-4 pr-2 custom-scroll">
+                            <div id="emptyCart" class="h-full flex flex-col items-center justify-center text-slate-500 mt-8">
+                                <i class="fas fa-cut text-4xl mb-3 opacity-30"></i>
+                                <p class="text-sm">Select services to book.</p>
+                            </div>
+                            <!-- Items injected here by JS -->
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="border-t border-slate-800 pt-4 mb-6">
+                            <!-- Appointment Fee Note -->
+                            <div class="flex justify-between text-yellow-500 mb-2 text-sm hidden" id="bookingFeeRow">
+                                <span>Appointment Charge</span>
+                                <span>$10.00</span>
+                            </div>
+                            
+                            <div class="flex justify-between font-bold text-xl text-white mt-4 border-t border-slate-800 pt-4">
+                                <span>Estimated Total</span>
+                                <span class="text-yellow-500">$<span id="cartTotal">0.00</span></span>
+                            </div>
+                        </div>
+
+                        <button onclick="openCheckoutModal()" id="checkoutBtn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm">
+                            <i class="fas fa-calendar-check mr-2"></i> Confirm Booking
+                        </button>
+                        
+                        <p class="text-center text-xs text-slate-500 mt-4"><i class="fas fa-info-circle mr-1"></i> Pay in-store. Online bookings include a $10 fee.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="itemModal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/80 modal-overlay" onclick="closeItemModal()"></div>
+        
+        <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-md z-10 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="itemModalContent">
+            
+            <!-- Modal Header -->
+            <div class="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-2xl text-white brand-font tracking-wide" id="modalItemName">Service Name</h3>
+                    <p class="text-yellow-500 font-bold text-sm mt-1">Base: $<span id="modalItemBasePrice">0.00</span></p>
+                </div>
+                <button onclick="closeItemModal()" class="text-slate-500 hover:text-white transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Body Options -->
+            <div class="p-6 overflow-y-auto custom-scroll flex-grow" id="modalItemOptions">
+                <!-- Injected via JS based on item type -->
+            </div>
+
+            <!-- Add to Cart Footer -->
+            <div class="p-6 bg-slate-950 border-t border-slate-800">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-slate-400 text-sm font-bold uppercase tracking-wider">Service Total:</span>
+                    <span class="text-2xl font-bold text-yellow-500">$<span id="modalItemTotalPrice">0.00</span></span>
+                </div>
+                <button onclick="confirmItemAdd()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-3 px-4 rounded-sm transition uppercase tracking-wide flex justify-center items-center shadow-lg shadow-yellow-500/20">
+                    Add to Booking
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/80 modal-overlay" onclick="closeModal()"></div>
+        
+        <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-md z-10 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <div class="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <h3 class="font-bold text-xl text-white brand-font tracking-wide">Finalize Appointment</h3>
+                <button onclick="closeModal()" class="text-slate-500 hover:text-white transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div class="p-6" id="modalBody">
+                <div class="flex justify-between text-lg mb-6 pb-4 border-b border-slate-800">
+                    <span class="text-slate-400">Total (incl. $10 fee):</span>
+                    <span class="font-bold text-yellow-500">$<span id="modalCheckoutTotal">0.00</span></span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-300 mb-1 uppercase tracking-wider">Full Name</label>
+                        <input type="text" placeholder="John Doe" class="w-full bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-3 focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition placeholder-slate-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-300 mb-1 uppercase tracking-wider">Phone Number (For SMS)</label>
+                        <input type="tel" placeholder="0400 000 000" class="w-full bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-3 focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition placeholder-slate-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-300 mb-1 uppercase tracking-wider">Requested Date & Time</label>
+                        <input type="datetime-local" class="w-full bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-3 focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition [color-scheme:dark]">
+                    </div>
+                </div>
+
+                <button onclick="processOrder()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-3 px-4 rounded-sm mt-8 transition flex items-center justify-center tracking-wide shadow-lg shadow-yellow-500/20">
+                    Request Booking
+                </button>
+            </div>
+            
+            <div class="p-10 text-center hidden" id="modalSuccess">
+                <div class="w-20 h-20 bg-green-900/30 border border-green-500/50 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500 text-4xl">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-2 brand-font tracking-wide">Request Sent!</h3>
+                <p class="text-slate-400 mb-6 text-sm">We've received your booking request. You will receive a text message shortly confirming your spot in the chair.</p>
+                <button onclick="resetAndClose()" class="w-full bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-sm transition uppercase tracking-wider text-sm">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="location" class="py-20 bg-slate-900 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-950 border border-slate-800 rounded-sm overflow-hidden shadow-2xl flex flex-col md:flex-row">
+                <div class="p-10 md:p-16 md:w-1/2 flex flex-col justify-center">
+                    <h2 class="text-4xl font-bold mb-8 text-white brand-font tracking-wide">Find The Shop</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-sm bg-slate-900 border border-slate-800 flex items-center justify-center mr-4 flex-shrink-0 text-yellow-500 text-xl shadow-inner">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1 text-white uppercase tracking-wider">Location</h4>
+                                <p class="text-slate-400 text-sm">Harris Park, NSW<br>Serving the local community</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-sm bg-slate-900 border border-slate-800 flex items-center justify-center mr-4 flex-shrink-0 text-yellow-500 text-xl shadow-inner">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="w-full">
+                                <h4 class="font-bold text-lg mb-2 text-white uppercase tracking-wider">Opening Hours</h4>
+                                <div class="flex justify-between text-slate-400 text-sm border-b border-slate-800 pb-2 mb-2"><span class="w-24 font-bold text-slate-300">Mon - Sun:</span> <span>9:30am to 8:00pm</span></div>
+                                <p class="text-xs text-yellow-500 mt-2 italic">* Open 7 Days a Week</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="w-12 h-12 rounded-sm bg-slate-900 border border-slate-800 flex items-center justify-center mr-4 flex-shrink-0 text-yellow-500 text-xl shadow-inner">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-1 text-white uppercase tracking-wider">Contact</h4>
+                                <a href="tel:0296357773" class="block text-slate-400 hover:text-yellow-500 transition text-sm mb-1">02 9635 7773</a>
+                                <a href="tel:0403527000" class="block text-slate-400 hover:text-yellow-500 transition text-sm">0403 527 000</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="md:w-1/2 bg-slate-800 min-h-[350px] relative h-full">
+                    <!-- Real Interactive Google Map centered on Harris Park NSW -->
+                    <iframe 
+                        src="https://maps.google.com/maps?q=Harris%20Park,%20NSW&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                        class="absolute inset-0 w-full h-full" 
+                        style="border:0; min-height: 100%;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-950 border-t border-slate-900 py-12 text-center">
+        <div class="mb-4">
+             <span class="brand-font font-bold text-3xl text-white flex items-center justify-center gap-2">
+                <span class="text-yellow-500">DESI BOYS</span> BARBER
+            </span>
+        </div>
+        <p class="text-slate-500 text-sm">&copy; 2026 Desi Boys Barber (Barber Lane). All Rights Reserved.</p>
+    </footer>
+
+    <div id="chatbot-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div id="chat-window" class="bg-slate-900 w-80 sm:w-96 rounded-sm shadow-2xl shadow-black border border-slate-700 overflow-hidden mb-4 hidden transform transition-all origin-bottom-right scale-95 opacity-0 duration-300">
+            <!-- Header -->
+            <div class="bg-slate-950 px-5 py-4 flex justify-between items-center text-white border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-slate-900 text-lg shadow-inner">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold brand-font tracking-widest text-lg">Shop Assistant</h4>
+                        <p class="text-[10px] text-slate-400 flex items-center uppercase"><span class="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></span> Ready</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-slate-500 hover:text-white transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Messages Area -->
+            <div id="chat-messages" class="h-80 p-4 overflow-y-auto bg-slate-900 space-y-4 text-sm flex flex-col custom-scroll">
+                <div class="flex items-start max-w-[85%]">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-yellow-500 mr-2 flex-shrink-0">
+                        <i class="fas fa-cut text-xs"></i>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-sm rounded-tl-none border border-slate-700 shadow-sm text-slate-300">
+                        Welcome to Desi Boys Barber in Harris Park. I can help with <strong>prices</strong>, <strong>opening hours</strong>, or <strong>booking</strong>!
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat-typing" class="px-4 py-2 bg-slate-900 hidden">
+                <div class="flex items-center space-x-1 text-yellow-500">
+                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce"></div>
+                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-slate-950 border-t border-slate-800 flex items-center space-x-2">
+                <input type="text" id="chat-input" placeholder="Ask a question..." class="flex-grow bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-2 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm placeholder-slate-500" onkeypress="handleChatEnter(event)">
+                <button onclick="sendMessage()" class="w-10 h-10 bg-yellow-500 rounded-sm text-slate-900 flex items-center justify-center hover:bg-yellow-400 transition shadow-md flex-shrink-0">
+                    <i class="fas fa-paper-plane text-sm -ml-0.5"></i>
+                </button>
+            </div>
+        </div>
+
+        <button id="chat-toggle-btn" onclick="toggleChat()" class="w-14 h-14 bg-yellow-500 rounded-full shadow-2xl shadow-black flex items-center justify-center text-slate-900 text-2xl hover:bg-yellow-400 hover:scale-110 transition duration-300 relative">
+            <i class="fas fa-comment-dots"></i>
+            <span class="absolute top-0 right-0 w-4 h-4 bg-red-600 border-2 border-slate-900 rounded-full animate-ping"></span>
+            <span class="absolute top-0 right-0 w-4 h-4 bg-red-600 border-2 border-slate-900 rounded-full"></span>
+        </button>
+    </div>
+
+    <script>
+        // --- GLOBAL STATE ---
+        let cart = [];
+        let baseTotal = 0;
+        const APPOINTMENT_FEE = 10.00;
+        
+        let currentItem = {
+            name: '',
+            basePrice: 0,
+            currentPrice: 0,
+            type: '',
+            options: [] 
+        };
+
+        const formatMoney = (amount) => amount.toFixed(2);
+
+        // --- CART LOGIC ---
+        function addToCart(itemName, price, optionsList = []) {
+            cart.push({ 
+                name: itemName, 
+                price: price,
+                options: optionsList
+            });
+            baseTotal += price;
+            
+            const cartCountEl = document.getElementById('cartCount');
+            cartCountEl.classList.add('pop-anim');
+            setTimeout(() => cartCountEl.classList.remove('pop-anim'), 300);
+            
+            renderCart();
+        }
+
+        function removeFromCart(index) {
+            baseTotal -= cart[index].price;
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function renderCart() {
+            const listEl = document.getElementById('cartItems');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const feeRow = document.getElementById('bookingFeeRow');
+            
+            let finalTotal = baseTotal;
+            if (cart.length > 0) {
+                finalTotal += APPOINTMENT_FEE;
+                feeRow.classList.remove('hidden');
+            } else {
+                feeRow.classList.add('hidden');
+            }
+
+            document.getElementById('cartCount').innerText = cart.length;
+            document.getElementById('cartTotal').innerText = formatMoney(finalTotal);
+            document.getElementById('modalCheckoutTotal').innerText = formatMoney(finalTotal);
+
+            if (cart.length === 0) {
+                listEl.innerHTML = `
+                    <div id="emptyCart" class="h-full flex flex-col items-center justify-center text-slate-500 mt-8">
+                        <i class="fas fa-cut text-4xl mb-3 opacity-30"></i>
+                        <p class="text-sm">Select services to book.</p>
+                    </div>
+                `;
+                
+                checkoutBtn.disabled = true;
+                checkoutBtn.className = "w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm";
+                return;
+            }
+
+            listEl.innerHTML = '';
+
+            cart.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between items-start bg-slate-800 p-3 rounded-sm border border-slate-700 shadow-sm'; 
+                
+                let optionsHtml = '';
+                if (item.options && item.options.length > 0) {
+                    optionsHtml = `<ul class="text-xs text-slate-400 mt-1.5 space-y-1">`;
+                    item.options.forEach(opt => {
+                        optionsHtml += `<li><i class="fas fa-caret-right text-yellow-500 mr-1"></i> ${opt}</li>`;
+                    });
+                    optionsHtml += `</ul>`;
+                }
+
+                itemDiv.innerHTML = `
+                    <div class="flex flex-col flex-grow pr-2">
+                        <div class="flex justify-between items-center w-full">
+                            <span class="font-bold text-sm text-white">${item.name}</span>
+                            <span class="text-xs font-bold text-yellow-500">$${formatMoney(item.price)}</span>
+                        </div>
+                        ${optionsHtml}
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="text-slate-500 hover:text-red-500 transition p-1 mt-[-2px]">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                `;
+                listEl.appendChild(itemDiv);
+            });
+
+            checkoutBtn.disabled = false;
+            checkoutBtn.className = "w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font font-bold text-xl py-4 px-4 rounded-sm transition shadow-lg shadow-yellow-500/20 flex items-center justify-center tracking-wide";
+        }
+
+        // --- CUSTOMIZATION MODAL LOGIC ---
+        function openCustomizationModal(name, basePrice, type) {
+            currentItem = {
+                name: name,
+                basePrice: basePrice,
+                currentPrice: basePrice,
+                type: type,
+                options: []
+            };
+
+            document.getElementById('modalItemName').innerText = name;
+            document.getElementById('modalItemBasePrice').innerText = formatMoney(basePrice);
+            document.getElementById('modalItemTotalPrice').innerText = formatMoney(basePrice);
+
+            const optionsContainer = document.getElementById('modalItemOptions');
+            let html = '';
+
+            if (type === 'fade') {
+                html += `
+                    <div class="mb-6">
+                        <h4 class="font-bold text-slate-300 mb-3 text-sm uppercase tracking-wider">Fade Type</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
+                                <input type="radio" name="fadeType" value="0" data-name="Standard Fade" checked class="h-4 w-4 custom-rdo" onchange="updateModalPrice()">
+                                <span class="ml-3 text-slate-300 text-sm">Standard Fade (Included)</span>
+                            </label>
+                            <label class="flex items-center justify-between p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
+                                <div class="flex items-center">
+                                    <input type="radio" name="fadeType" value="10.00" data-name="Skin Fade" class="h-4 w-4 custom-rdo" onchange="updateModalPrice()">
+                                    <span class="ml-3 text-slate-300 text-sm">Skin Fade</span>
+                                </div>
+                                <span class="text-sm font-bold text-yellow-500">+$10.00</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (type === 'haircut' || type === 'fade') {
+                html += `
+                    <div class="mb-6">
+                        <h4 class="font-bold text-slate-300 mb-3 text-sm uppercase tracking-wider">Hair Enhancements</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center justify-between p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
+                                <div class="flex items-center">
+                                    <input type="checkbox" value="5.00" data-name="Hard Part (Razor Line)" class="custom-chk h-4 w-4 rounded bg-slate-900 border-slate-600" onchange="updateModalPrice()">
+                                    <span class="ml-3 text-sm text-slate-300">Hard Part (Razor Line)</span>
+                                </div>
+                                <span class="text-sm font-bold text-yellow-500">+$5.00</span>
+                            </label>
+                            <label class="flex items-center justify-between p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
+                                <div class="flex items-center">
+                                    <input type="checkbox" value="5.00" data-name="Hair Wash" class="custom-chk h-4 w-4 rounded bg-slate-900 border-slate-600" onchange="updateModalPrice()">
+                                    <span class="ml-3 text-sm text-slate-300">Hair Wash</span>
+                                </div>
+                                <span class="text-sm font-bold text-yellow-500">+$5.00</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (type === 'grooming' || type === 'threading') {
+                 html += `
+                    <div class="mb-6">
+                        <p class="text-sm text-slate-400 italic">No extra add-ons required for this service. Proceed to add notes if necessary.</p>
+                    </div>
+                `;
+            }
+
+            // Global Note Section
+            html += `
+                <div>
+                    <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wider">Special Requests</label>
+                    <textarea id="modalItemNotes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-sm p-3 text-white focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 text-sm placeholder-slate-500" placeholder="E.g., Keep the top long..."></textarea>
+                </div>
+            `;
+
+            optionsContainer.innerHTML = html;
+
+            const modal = document.getElementById('itemModal');
+            const content = document.getElementById('itemModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeItemModal() {
+            const modal = document.getElementById('itemModal');
+            const content = document.getElementById('itemModalContent');
+            
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function updateModalPrice() {
+            let addedPrice = 0;
+            
+            // Handle Radio (like Fade type)
+            const radios = document.querySelectorAll('#modalItemOptions input[type="radio"]:checked');
+            radios.forEach(r => {
+                addedPrice += parseFloat(r.value);
+            });
+
+            // Handle Checkboxes
+            const checkboxes = document.querySelectorAll('#modalItemOptions .custom-chk:checked');
+            checkboxes.forEach(chk => {
+                addedPrice += parseFloat(chk.value);
+            });
+
+            currentItem.currentPrice = currentItem.basePrice + addedPrice;
+            document.getElementById('modalItemTotalPrice').innerText = formatMoney(currentItem.currentPrice);
+        }
+
+        function confirmItemAdd() {
+            const selectedOptions = [];
+            
+            const radios = document.querySelectorAll('#modalItemOptions input[type="radio"]:checked');
+            radios.forEach(r => {
+                if(parseFloat(r.value) > 0) {
+                    selectedOptions.push(r.getAttribute('data-name'));
+                }
+            });
+
+            const checkboxes = document.querySelectorAll('#modalItemOptions .custom-chk:checked');
+            checkboxes.forEach(chk => {
+                selectedOptions.push(`+ ${chk.getAttribute('data-name')}`);
+            });
+
+            const notes = document.getElementById('modalItemNotes').value.trim();
+            if (notes) {
+                selectedOptions.push(`Note: "${notes}"`);
+            }
+
+            addToCart(currentItem.name, currentItem.currentPrice, selectedOptions);
+            closeItemModal();
+        }
+
+        // --- CHECKOUT MODAL LOGIC ---
+        function openCheckoutModal() {
+            if(cart.length === 0) return;
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('checkoutModal');
+            const content = document.getElementById('modalContent');
+            
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function processOrder() {
+            const btn = event.currentTarget;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('modalBody').classList.add('hidden');
+                document.getElementById('modalSuccess').classList.remove('hidden');
+                document.getElementById('modalSuccess').classList.add('flex', 'flex-col');
+            }, 1500);
+        }
+
+        function resetAndClose() {
+            closeModal();
+            
+            setTimeout(() => {
+                cart = [];
+                baseTotal = 0;
+                renderCart();
+                
+                document.getElementById('modalBody').classList.remove('hidden');
+                document.getElementById('modalSuccess').classList.add('hidden');
+                document.getElementById('modalSuccess').classList.remove('flex', 'flex-col');
+                
+                const processBtn = document.querySelector('#modalBody button');
+                processBtn.innerHTML = 'Request Booking';
+                processBtn.disabled = false;
+            }, 500);
+        }
+
+        // --- SMART SHOP HOURS LOGIC ---
+        function updateShopAvailability() {
+            const now = new Date();
+            const day = now.getDay(); 
+            const hour = now.getHours();
+            const min = now.getMinutes();
+            const currentTime = hour + (min / 60);
+
+            let isOpen = false;
+
+            // Open 7 Days: 9:30am - 8:00pm
+            if (currentTime >= 9.5 && currentTime < 20.0) {
+                isOpen = true;
+            }
+
+            const shopStatus = document.getElementById('shopStatus');
+            if (shopStatus) {
+                if (isOpen) {
+                    shopStatus.innerHTML = '<i class="fas fa-circle text-green-500 text-[10px] mr-2"></i> Shop is Open';
+                    shopStatus.className = "inline-flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-sm text-slate-300 text-sm font-semibold transition-colors duration-300 shadow-inner";
+                } else {
+                    shopStatus.innerHTML = '<i class="fas fa-circle text-red-500 text-[10px] mr-2"></i> Shop is Closed';
+                    shopStatus.className = "inline-flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-sm text-slate-500 text-sm font-semibold transition-colors duration-300 shadow-inner";
+                }
+            }
+        }
+
+        updateShopAvailability();
+        setInterval(updateShopAvailability, 60000);
+
+        // --- AI CHATBOT LOGIC ---
+        const chatWindow = document.getElementById('chat-window');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatTyping = document.getElementById('chat-typing');
+
+        function toggleChat() {
+            if (chatWindow.classList.contains('hidden')) {
+                chatWindow.classList.remove('hidden');
+                setTimeout(() => {
+                    chatWindow.classList.remove('scale-95', 'opacity-0');
+                    chatWindow.classList.add('scale-100', 'opacity-100');
+                }, 10);
+                chatInput.focus();
+            } else {
+                chatWindow.classList.remove('scale-100', 'opacity-100');
+                chatWindow.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    chatWindow.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function handleChatEnter(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function appendMessage(text, isUser) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = isUser ? 'flex items-end justify-end max-w-[85%] self-end' : 'flex items-start max-w-[85%]';
+            
+            let innerHTML = '';
+            if (isUser) {
+                innerHTML = `
+                    <div class="bg-yellow-500 p-3 rounded-sm rounded-tr-none shadow-sm text-slate-900 text-sm font-medium">
+                        ${text}
+                    </div>
+                `;
+            } else {
+                innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-yellow-500 mr-2 flex-shrink-0">
+                        <i class="fas fa-cut text-xs"></i>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-sm rounded-tl-none border border-slate-700 shadow-sm text-slate-300 text-sm">
+                        ${text}
+                    </div>
+                `;
+            }
+            
+            msgDiv.innerHTML = innerHTML;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            appendMessage(text, true);
+            chatInput.value = '';
+            
+            chatTyping.classList.remove('hidden');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            setTimeout(() => {
+                chatTyping.classList.add('hidden');
+                generateBotResponse(text.toLowerCase());
+            }, 1000 + Math.random() * 1000); 
+        }
+
+        function generateBotResponse(input) {
+            let response = "I'm the digital barber assistant. You can book an appointment above, or ask me about our prices and location in Harris Park!";
+            
+            if (input.includes('hour') || input.includes('time') || input.includes('open')) {
+                response = "We are open 7 days a week! Monday to Sunday from 9:30am to 8:00pm.";
+            } else if (input.includes('where') || input.includes('location') || input.includes('address') || input.includes('harris park')) {
+                response = "We are located right in the heart of Harris Park, NSW. Check the map at the bottom of the page!";
+            } else if (input.includes('walk') || input.includes('appointment') || input.includes('booking')) {
+                response = "We welcome walk-ins! However, if you book an appointment online via this website, there is a standard $10 appointment charge added to secure your spot.";
+            } else if (input.includes('price') || input.includes('cost') || input.includes('how much')) {
+                response = "Our Crew Cuts are $15, Style Cuts are $20, and Fades start at $25. A Beard Trim is $15. Select 'Book Appointment' to see the full menu.";
+            } else if (input.includes('fade') || input.includes('skin fade') || input.includes('zero')) {
+                response = "Fades start at $25. If you want a Skin Fade, it is an extra $10 (Total $35). You can select this option in the menu when booking.";
+            } else if (input.includes('beard') || input.includes('trim')) {
+                response = "A Beard Line Up is $10, a standard Beard Trim is $15, and a Full Beard sculpt is $20. We also offer beard colouring for $25!";
+            } else if (input.includes('threading') || input.includes('women')) {
+                response = "Yes! We offer Women's Cuts starting from $25, and various Threading services (Eyebrows $10, Cheeks $15, Full Face $30).";
+            } else if (input.includes('facial') || input.includes('massage')) {
+                response = "We do a great Head Massage for $20, a Scrub for $20, or a complete Premium Facial for $70 to keep you looking fresh.";
+            } else if (input.includes('contact') || input.includes('phone') || input.includes('call')) {
+                response = "You can call us directly at 02 9635 7773 or 0403 527 000.";
+            } else if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
+                response = "Welcome to Desi Boys Barber! Ready for a fresh cut? Let me know if you need help looking at the menu.";
+            }
+
+            appendMessage(response, false);
+        }
+
+    </script>
+</body>
+</html>
