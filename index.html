@@ -794,37 +794,58 @@
                     // --- DEVELOPER ROUTE (BACKEND CONNECTION) ---
                     // This code sends the token AND booking info to the server.js file
                     // (I am leaving it commented out so your preview doesn't break while you aren't hosting the server yet)
-                    
-                    /*
-                   fetch('https://stripe-backend-7brd5s7mc-jcccccc.vercel.app/api/charge', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            token: result.token.id,
-                            bookingDetails: {
-                                name: custName,
-                                phone: custPhone,
-                                time: timeString,
-                                services: cartSummary
-                            }
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.success) {
-                            showSuccessScreen();
-                        } else {
-                            throw new Error(data.error);
-                        }
-                    })
-                    .catch(error => {
-                        const errorElement = document.getElementById('card-errors');
-                        errorElement.textContent = error.message;
-                        errorElement.classList.remove('hidden');
-                        btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
-                        btn.disabled = false;
-                    });
-                    */
+                   
+                   function processStripePayment() {
+    const btn = document.getElementById('stripe-submit-btn');
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Verifying Card...';
+    btn.disabled = true;
+
+    stripe.createToken(cardElement).then(function(result) {
+        if (result.error) {
+            const errorElement = document.getElementById('card-errors');
+            errorElement.textContent = result.error.message;
+            errorElement.classList.remove('hidden');
+            btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
+            btn.disabled = false;
+        } else {
+            const custName = document.getElementById('custName').value;
+            const custPhone = document.getElementById('custPhone').value;
+            const selectedTimeInput = document.querySelector('input[name="time"]:checked');
+            const timeString = selectedTimeInput ? selectedTimeInput.nextElementSibling.innerText : 'No time selected';
+            const cartSummary = cart.map(item => item.name).join(', ');
+
+            fetch('https://stripe-backend-7brd5s7mc-jcccccc.vercel.app/api/charge', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    token: result.token.id,
+                    bookingDetails: {
+                        name: custName,
+                        phone: custPhone,
+                        time: timeString,
+                        services: cartSummary
+                    }
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    showSuccessScreen();
+                } else {
+                    throw new Error(data.error);
+                }
+            })
+            .catch(error => {
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = error.message;
+                errorElement.classList.remove('hidden');
+                btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
+                btn.disabled = false;
+            });
+        }
+    });
+}
+
                     
                     // For now, immediately show the success screen to the client:
                     showSuccessScreen();
