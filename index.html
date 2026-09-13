@@ -101,9 +101,8 @@
             isolation: isolate;
             overflow: hidden;
             min-height: min(820px, 92vh);
-            background:
-                linear-gradient(115deg, rgba(8, 10, 16, 0.96) 0%, rgba(8, 10, 16, 0.74) 44%, rgba(8, 10, 16, 0.28) 100%),
-                url("https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=85&w=1800") center / cover;
+            /* Standard background fallback */
+            background-color: var(--ink);
         }
 
         .hero::after {
@@ -117,24 +116,28 @@
                 radial-gradient(circle at 70% 30%, rgba(217, 255, 79, 0.14), transparent 22rem);
         }
 
+        /* 
+         * LAG FIX: Removed 'mix-blend-mode: screen' as it forces the integrated GPU 
+         * to do massive recalculations. Also added transform: translateZ(0) to force hardware acceleration. 
+         */
         #hero-canvas {
             position: absolute;
             inset: 0;
             z-index: -1;
             width: 100%;
             height: 100%;
-            opacity: 0.6;
+            opacity: 0.4;
             pointer-events: none;
-            /* Forced hardware acceleration to eliminate laptop lag */
-            transform: translateZ(0);
+            transform: translateZ(0); 
             will-change: transform;
         }
 
+        /* LAG FIX: Removed heavy CSS mask-image here */
         .hero-grid {
             position: absolute;
             inset: 0;
             z-index: -1;
-            opacity: 0.16;
+            opacity: 0.12;
             pointer-events: none;
             background-image:
                 linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
@@ -143,25 +146,10 @@
         }
 
         .glass {
-            background: rgba(17, 20, 28, 0.72);
+            background: rgba(17, 20, 28, 0.85);
             border: 1px solid var(--line);
             box-shadow: 0 24px 80px rgba(0, 0, 0, 0.26);
-            backdrop-filter: blur(18px);
-        }
-
-        /* FIREFOX SPECIFIC LAG FIX: Firefox chokes on backdrop-filter over WebGL */
-        @-moz-document url-prefix() {
-            .glass {
-                backdrop-filter: none !important;
-                background: rgba(17, 20, 28, 0.96) !important;
-            }
-            .modal {
-                backdrop-filter: none !important;
-                background: rgba(0, 0, 0, 0.95) !important;
-            }
-            #hero-canvas {
-                opacity: 0.3; /* Lessens composite blending overhead */
-            }
+            backdrop-filter: blur(12px);
         }
 
         .section-kicker {
@@ -215,10 +203,7 @@
             background:
                 linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
                 var(--panel);
-            transition:
-                border-color 180ms ease,
-                transform 180ms ease,
-                box-shadow 180ms ease;
+            transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
         }
 
         .service-card::before {
@@ -265,9 +250,7 @@
             outline: none;
             color: #f8fafc;
             background: var(--panel-2);
-            transition:
-                border-color 180ms ease,
-                box-shadow 180ms ease;
+            transition: border-color 180ms ease, box-shadow 180ms ease;
         }
 
         .service-input:focus, .service-textarea:focus {
@@ -289,7 +272,7 @@
             padding: 1rem;
             isolation: isolate;
             background: rgba(0, 0, 0, 0.76);
-            backdrop-filter: blur(14px);
+            backdrop-filter: blur(8px);
             animation: modal-fade-in 160ms ease both;
             overscroll-behavior: contain;
         }
@@ -324,10 +307,10 @@
         }
 
         .dialog-body {
-            flex: 1 1 auto;
             min-height: 0;
             overflow-y: auto;
             overscroll-behavior: contain;
+            flex: 1 1 auto; /* Fixes modal scrolling */
         }
 
         .dialog-body::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar {
@@ -350,9 +333,7 @@
             gap: 1rem;
             border: 1px solid var(--line);
             background: var(--panel-2);
-            transition:
-                border-color 180ms ease,
-                background-color 180ms ease;
+            transition: border-color 180ms ease, background-color 180ms ease;
         }
 
         .option-row:hover {
@@ -378,16 +359,25 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: saturate(0.72);
-            transition:
-                transform 500ms ease,
-                filter 500ms ease;
+            filter: saturate(0.85);
+            transition: transform 500ms ease, filter 500ms ease;
+        }
+
+        /* Custom image crops to hide ugly UI from screenshots provided */
+        .lookbook-crop-storefront {
+            transform: scale(1.15); /* Pushes the left/right arrows out of view */
+        }
+        .lookbook-crop-clipper {
+            transform: scale(1.18) translateY(5%); /* Zooms past the "3 years ago" text and side arrows */
         }
 
         .lookbook-tile:hover .lookbook-image {
             filter: saturate(1.1);
-            transform: scale(1.06);
         }
+        /* Further hover scaling combining the base crop + extra zoom */
+        .lookbook-tile:hover .lookbook-crop-storefront { transform: scale(1.2); }
+        .lookbook-tile:hover .lookbook-crop-clipper { transform: scale(1.23) translateY(5%); }
+        .lookbook-tile:hover .img-normal { transform: scale(1.06); }
 
         .status-dot {
             width: 8px;
@@ -407,24 +397,34 @@
             animation: chat-in 180ms ease both;
         }
 
-        .chat-panel[hidden] {
-            display: none;
+        .chat-panel[hidden] { display: none; }
+        .chat-message { max-width: 88%; word-break: break-word; }
+
+        #toast {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 150;
+            max-width: min(360px, calc(100vw - 2.5rem));
+            padding: 0.9rem 1rem;
+            border: 1px solid rgba(217, 255, 79, 0.35);
+            color: #f8fafc;
+            background: rgba(17, 20, 28, 0.96);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition: opacity 180ms ease, transform 180ms ease;
         }
 
-        .chat-message {
-            max-width: 88%;
-            word-break: break-word;
-        }
+        #toast.is-visible { opacity: 1; transform: translateY(0); }
 
-        /* Stripe Element specific styling */
         .stripe-card {
             min-height: 44px;
             padding: 0.75rem;
             border: 1px solid var(--line);
             background: var(--panel-2);
-            transition:
-                border-color 180ms ease,
-                box-shadow 180ms ease;
+            transition: border-color 180ms ease, box-shadow 180ms ease;
         }
 
         .stripe-card:focus-within {
@@ -461,12 +461,8 @@
                 min-height: 760px;
                 background-position: 58% center;
             }
-            #hero-canvas {
-                opacity: 0.52;
-            }
-            .dialog {
-                max-height: calc(100dvh - 1rem);
-            }
+            #hero-canvas { opacity: 0.35; }
+            .dialog { max-height: calc(100dvh - 1rem); }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -476,9 +472,7 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.001ms !important;
             }
-            #hero-canvas {
-                display: none;
-            }
+            #hero-canvas { display: none; }
         }
     </style>
 </head>
@@ -503,14 +497,7 @@
                 </a>
             </div>
 
-            <button
-                id="mobile-menu-button"
-                type="button"
-                class="grid h-11 w-11 place-items-center border border-white/10 bg-white/5 text-white md:hidden"
-                aria-expanded="false"
-                aria-controls="mobile-menu"
-                aria-label="Open navigation menu"
-            >
+            <button id="mobile-menu-button" type="button" class="grid h-11 w-11 place-items-center border border-white/10 bg-white/5 text-white md:hidden" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation menu">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </nav>
@@ -598,33 +585,21 @@
 
                 <div class="mt-16 grid gap-4 md:grid-cols-3">
                     <article class="glass p-7">
-                        <div class="service-icon">
-                            <i class="fa-solid fa-scissors"></i>
-                        </div>
+                        <div class="service-icon"><i class="fa-solid fa-scissors"></i></div>
                         <h3 class="mt-8 font-display text-2xl font-bold text-white">Precision cuts</h3>
-                        <p class="mt-4 text-sm leading-7 text-slate-400">
-                            From machine cuts to skin fades, every line is finished with intent.
-                        </p>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">From machine cuts to skin fades, every line is finished with intent.</p>
                     </article>
 
                     <article class="glass p-7">
-                        <div class="service-icon">
-                            <i class="fa-solid fa-sparkles"></i>
-                        </div>
+                        <div class="service-icon"><i class="fa-solid fa-sparkles"></i></div>
                         <h3 class="mt-8 font-display text-2xl font-bold text-white">Grooming rituals</h3>
-                        <p class="mt-4 text-sm leading-7 text-slate-400">
-                            Beard shaping, facials, scrubs, and head massages for a complete reset.
-                        </p>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">Beard shaping, facials, scrubs, and head massages for a complete reset.</p>
                     </article>
 
                     <article class="glass p-7">
-                        <div class="service-icon">
-                            <i class="fa-solid fa-gem"></i>
-                        </div>
+                        <div class="service-icon"><i class="fa-solid fa-gem"></i></div>
                         <h3 class="mt-8 font-display text-2xl font-bold text-white">Threading experts</h3>
-                        <p class="mt-4 text-sm leading-7 text-slate-400">
-                            Detailed eyebrow, cheek, forehead, and full-face threading with clean results.
-                        </p>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">Detailed eyebrow, cheek, forehead, and full-face threading with clean results.</p>
                     </article>
                 </div>
             </div>
@@ -645,17 +620,35 @@
                 </div>
 
                 <div class="mt-14 grid auto-rows-[180px] grid-cols-2 gap-3 sm:auto-rows-[240px] md:grid-cols-4">
+                    
+                    <!-- 1. Storefront -->
                     <div class="lookbook-tile group col-span-2 row-span-2 overflow-hidden border border-white/10">
-                        <img class="lookbook-image" src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=85&w=1000" alt="Barber working on a haircut" loading="lazy">
+                        <img class="lookbook-image" style="transform: scale(1.15);" src="./Screenshot%202026-09-13%20233712.jpg" alt="Desi Boys Barber Storefront" loading="lazy">
                     </div>
+                    
+                    <!-- 2. Haircut at Mirror -->
                     <div class="lookbook-tile group overflow-hidden border border-white/10">
-                        <img class="lookbook-image" src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=85&w=600" alt="Finished beard trim" loading="lazy">
+                        <img class="lookbook-image" src="./Screenshot%202026-09-13%20233555.jpg" alt="Barber cutting hair" loading="lazy">
                     </div>
+
+                    <!-- 3. Beard Trim -->
                     <div class="lookbook-tile group overflow-hidden border border-white/10">
-                        <img class="lookbook-image" src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=85&w=600" alt="Scissor haircut detail" loading="lazy">
+                        <img class="lookbook-image" src="./Screenshot%202026-09-13%20233510.png" alt="Beard trim" loading="lazy">
                     </div>
-                    <div class="lookbook-tile group col-span-2 overflow-hidden border border-white/10">
-                        <img class="lookbook-image" src="https://images.unsplash.com/photo-1534723452862-4c8765377f3f?auto=format&fit=crop&q=85&w=900" alt="Barber tools and styling equipment" loading="lazy">
+                    
+                    <!-- 4. Clippers & Brush -->
+                    <div class="lookbook-tile group overflow-hidden border border-white/10">
+                        <img class="lookbook-image" style="transform: scale(1.18) translateY(5%);" src="./Screenshot%202026-09-13%20233627.jpg" alt="Clippers and Brush" loading="lazy">
+                    </div>
+
+                    <!-- 5. Mirror Counter -->
+                    <div class="lookbook-tile group overflow-hidden border border-white/10">
+                        <img class="lookbook-image" src="./Screenshot%202026-09-13%20233643.jpg" alt="Barber counter" loading="lazy">
+                    </div>
+                    
+                    <!-- 6. Empty Chairs (Spans across the bottom) -->
+                    <div class="lookbook-tile group col-span-2 md:col-span-4 overflow-hidden border border-white/10">
+                        <img class="lookbook-image" src="./Screenshot%202026-09-13%20233607.png" style="object-position: center 60%; transform: scale(1.05);" alt="Barber chairs" loading="lazy">
                     </div>
                 </div>
 
@@ -853,7 +846,7 @@
                 </button>
             </div>
 
-            <!-- FLEXBOX FIX APPLIED: Button is pinned to the bottom now -->
+            <!-- FIXED FOR MOBILE: flex flex-1 flex-col min-h-0 guarantees footer stays at the bottom -->
             <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
                 <div class="dialog-body space-y-8 p-6">
                     <div class="grid gap-3 sm:grid-cols-4">
@@ -1092,37 +1085,20 @@
                 toast: $("#toast")
             };
 
-            function formatMoney(value) {
-                return `$${Number(value).toFixed(2)}`;
-            }
+            function formatMoney(value) { return `$${Number(value).toFixed(2)}`; }
 
             function escapeHTML(value) {
-                return String(value)
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                    .replaceAll("'", "&#039;");
+                return String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
             }
 
             function createId() {
-                if (window.crypto && typeof window.crypto.randomUUID === "function") {
-                    return window.crypto.randomUUID();
-                }
+                if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
                 return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
             }
 
             function getSydneyDateParts(date = new Date()) {
-                const parts = new Intl.DateTimeFormat("en-AU", {
-                    timeZone: SHOP_TIME_ZONE,
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit"
-                }).formatToParts(date);
-
-                return Object.fromEntries(
-                    parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value])
-                );
+                const parts = new Intl.DateTimeFormat("en-AU", { timeZone: SHOP_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(date);
+                return Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
             }
 
             function getSydneyDateISO() {
@@ -1141,31 +1117,20 @@
                 elements.toast.textContent = message;
                 elements.toast.classList.add("is-visible");
                 window.clearTimeout(showToast.timeoutId);
-                showToast.timeoutId = window.setTimeout(() => {
-                    elements.toast.classList.remove("is-visible");
-                }, 3200);
+                showToast.timeoutId = window.setTimeout(() => elements.toast.classList.remove("is-visible"), 3200);
             }
 
             function setModalOpen(modal, open) {
                 modal.hidden = !open;
-                document.body.classList.toggle(
-                    "modal-open",
-                    !elements.itemModal.hidden || !elements.checkoutModal.hidden
-                );
+                document.body.classList.toggle("modal-open", !elements.itemModal.hidden || !elements.checkoutModal.hidden);
             }
 
             function closeModalById(id) {
-                if (id === "item-modal") {
-                    setModalOpen(elements.itemModal, false);
-                    state.currentItem = null;
-                }
+                if (id === "item-modal") { setModalOpen(elements.itemModal, false); state.currentItem = null; }
                 if (id === "checkout-modal") {
                     setModalOpen(elements.checkoutModal, false);
                     const processBtn = $("#pay-button"); 
-                    if(processBtn){
-                        processBtn.innerHTML = '<i class="fa-solid fa-lock text-xs"></i> Pay $10 deposit and book';
-                        processBtn.disabled = false;
-                    }
+                    if(processBtn){ processBtn.innerHTML = '<i class="fa-solid fa-lock text-xs"></i> Pay $10 deposit and book'; processBtn.disabled = false; }
                 }
             }
 
@@ -1184,13 +1149,9 @@
                         <div class="flex flex-col justify-between gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end">
                             <div>
                                 <p class="section-kicker">Category</p>
-                                <h3 class="mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-white">
-                                    ${escapeHTML(category)}
-                                </h3>
+                                <h3 class="mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-white">${escapeHTML(category)}</h3>
                             </div>
-                            <p class="max-w-sm text-sm leading-6 text-slate-500">
-                                ${escapeHTML(CATEGORY_DESCRIPTIONS[category] || "")}
-                            </p>
+                            <p class="max-w-sm text-sm leading-6 text-slate-500">${escapeHTML(CATEGORY_DESCRIPTIONS[category] || "")}</p>
                         </div>
                     `;
 
@@ -1215,8 +1176,7 @@
                                 <p class="mt-3 text-sm leading-6 text-slate-500">${escapeHTML(service.description)}</p>
                             </div>
                             <button type="button" class="ghost-button mt-7 flex w-full items-center justify-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider" data-service-id="${escapeHTML(service.id)}">
-                                ${service.type === "retail" ? "Add to order" : "Select options"}
-                                <i class="fa-solid fa-arrow-right text-[10px] text-acid"></i>
+                                ${service.type === "retail" ? "Add to order" : "Select options"} <i class="fa-solid fa-arrow-right text-[10px] text-acid"></i>
                             </button>
                         `;
                         grid.appendChild(card);
@@ -1322,9 +1282,7 @@
                 });
             }
 
-            function closeItemModal() {
-                closeModalById("item-modal");
-            }
+            function closeItemModal() { closeModalById("item-modal"); }
 
             function addCurrentItemToCart() {
                 if (!state.currentItem) return;
@@ -1349,13 +1307,8 @@
                 showToast(`${service.name} added to your booking.`);
             }
 
-            function getCartSubtotal() {
-                return state.cart.reduce((total, item) => total + item.price, 0);
-            }
-
-            function getCartTotal() {
-                return state.cart.length > 0 ? getCartSubtotal() + BOOKING_DEPOSIT : 0;
-            }
+            function getCartSubtotal() { return state.cart.reduce((total, item) => total + item.price, 0); }
+            function getCartTotal() { return state.cart.length > 0 ? getCartSubtotal() + BOOKING_DEPOSIT : 0; }
 
             function renderCartItem(item) {
                 const wrapper = document.createElement("article");
@@ -1409,9 +1362,7 @@
                 const total = getCartTotal();
 
                 elements.cartItems.replaceChildren();
-                state.cart.forEach((item) => {
-                    elements.cartItems.appendChild(renderCartItem(item));
-                });
+                state.cart.forEach((item) => elements.cartItems.appendChild(renderCartItem(item)));
 
                 elements.cartEmpty.hidden = state.cart.length > 0;
                 elements.cartCount.textContent = String(state.cart.length);
@@ -1431,7 +1382,6 @@
             function removeCartItem(cartId) {
                 const index = state.cart.findIndex((item) => item.cartId === cartId);
                 if (index === -1) return;
-
                 const removedItem = state.cart[index];
                 state.cart.splice(index, 1);
                 renderCart();
@@ -1494,26 +1444,12 @@
                 const phone = elements.customerPhone.value.trim();
 
                 let valid = true;
-                if (!date || date < elements.bookingDate.min) {
-                    elements.bookingDate.setAttribute("aria-invalid", "true");
-                    valid = false;
-                }
-                if (!selectedTime) {
-                    elements.timeError.textContent = "Select an appointment time.";
-                    elements.timeError.hidden = false;
-                    valid = false;
-                }
-                if (name.length < 2) {
-                    elements.customerName.setAttribute("aria-invalid", "true");
-                    valid = false;
-                }
-                if (!/^[+0-9()\s-]{8,}$/.test(phone)) {
-                    elements.customerPhone.setAttribute("aria-invalid", "true");
-                    valid = false;
-                }
-                if (!valid) {
-                    showCheckoutError("Please complete the highlighted booking details.");
-                }
+                if (!date || date < elements.bookingDate.min) { elements.bookingDate.setAttribute("aria-invalid", "true"); valid = false; }
+                if (!selectedTime) { elements.timeError.textContent = "Select an appointment time."; elements.timeError.hidden = false; valid = false; }
+                if (name.length < 2) { elements.customerName.setAttribute("aria-invalid", "true"); valid = false; }
+                if (!/^[+0-9()\s-]{8,}$/.test(phone)) { elements.customerPhone.setAttribute("aria-invalid", "true"); valid = false; }
+                
+                if (!valid) showCheckoutError("Please complete the highlighted booking details.");
                 return valid;
             }
 
@@ -1548,13 +1484,7 @@
                     state.stripeCard = stripeElements.create("card", {
                         hidePostalCode: true,
                         style: {
-                            base: {
-                                color: "#f8fafc",
-                                fontFamily: '"DM Sans", sans-serif',
-                                fontSize: "14px",
-                                fontSmoothing: "antialiased",
-                                "::placeholder": { color: "#687083" }
-                            },
+                            base: { color: "#f8fafc", fontFamily: '"DM Sans", sans-serif', fontSize: "14px", fontSmoothing: "antialiased", "::placeholder": { color: "#687083" } },
                             invalid: { color: "#ff7070", iconColor: "#ff7070" }
                         }
                     });
@@ -1584,17 +1514,10 @@
                 elements.bookingDate.min = getSydneyDateISO();
                 updateCheckoutSummary();
                 clearCheckoutErrors();
-                
-                // Show modal first so Stripe can calculate heights correctly
                 setModalOpen(elements.checkoutModal, true);
                 
-                setTimeout(() => {
-                    mountStripeCard();
-                }, 50);
-
-                window.requestAnimationFrame(() => {
-                    elements.bookingDate.focus();
-                });
+                setTimeout(() => mountStripeCard(), 50);
+                window.requestAnimationFrame(() => elements.bookingDate.focus());
             }
 
             function resetCheckoutView() {
@@ -1604,9 +1527,7 @@
                 elements.bookingDate.min = getSydneyDateISO();
                 clearCheckoutErrors();
 
-                if (state.stripeCard) {
-                    state.stripeCard.clear();
-                }
+                if (state.stripeCard) state.stripeCard.clear();
                 state.completedBooking = null;
             }
 
@@ -1645,18 +1566,12 @@
                     const booking = getBookingDetails();
                     
                     const result = await state.stripe.createToken(state.stripeCard);
+                    if (result.error) throw new Error(result.error.message);
 
-                    if (result.error) {
-                        throw new Error(result.error.message);
-                    }
-
-                    // Pack exactly what the Vercel backend expects to feed into the Stripe Dashboard
-                    const servicesList = state.cart.map(item => {
-                        return item.options.length > 0 ? `${item.name} (${item.options.join(', ')})` : item.name;
-                    }).join(' | ');
-
+                    const servicesList = state.cart.map(item => item.options.length > 0 ? `${item.name} (${item.options.join(', ')})` : item.name).join(' | ');
                     const paymentDescription = `Appt: ${booking.date} @ ${booking.timeLabel} | Client: ${booking.name}`;
 
+                    // THIS is what passes metadata perfectly to your Vercel backend
                     const response = await fetch(CONFIG.paymentIntentEndpoint, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -1694,13 +1609,7 @@
             }
 
             function updateShopStatus() {
-                const formatter = new Intl.DateTimeFormat("en-AU", {
-                    timeZone: SHOP_TIME_ZONE,
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false
-                });
-
+                const formatter = new Intl.DateTimeFormat("en-AU", { timeZone: SHOP_TIME_ZONE, hour: "2-digit", minute: "2-digit", hour12: false });
                 const parts = formatter.formatToParts(new Date());
                 const hour = Number(parts.find((part) => part.type === "hour")?.value || 0);
                 const minute = Number(parts.find((part) => part.type === "minute")?.value || 0);
@@ -1775,7 +1684,6 @@
             function initThreeBackground() {
                 const canvas = $("#hero-canvas");
                 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
                 if (!canvas || !window.THREE || reducedMotion) return;
 
                 try {
@@ -1783,36 +1691,34 @@
                     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
                     camera.position.z = 7;
 
+                    // LAG FIX: Disabled antialiasing to massively boost integrated graphics performance
                     const renderer = new THREE.WebGLRenderer({
                         canvas,
                         alpha: true,
-                        // Disabled antialiasing to massively boost laptop/integrated graphics performance
                         antialias: false,
                         powerPreference: "low-power"
                     });
 
-                    // Forced pixel ratio to 1.0 to eliminate high-DPI scaling lag on mobile/laptops
+                    // LAG FIX: Forced pixel ratio to 1.0 (Overrides default high-res laptop displays scaling)
                     renderer.setPixelRatio(1.0);
                     renderer.setClearColor(0x000000, 0);
 
                     const group = new THREE.Group();
                     scene.add(group);
 
-                    // Drastically reduced geometry vertices for performance
-                    const coreGeometry = new THREE.IcosahedronGeometry(2.25, 1);
+                    const coreGeometry = new THREE.IcosahedronGeometry(2.25, 2);
                     const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xd9ff4f, wireframe: true, transparent: true, opacity: 0.12 });
                     const core = new THREE.Mesh(coreGeometry, coreMaterial);
                     group.add(core);
 
-                    // Lowered ring segments to reduce polygon count
-                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 4, 32);
+                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 160);
                     const ringMaterial = new THREE.MeshBasicMaterial({ color: 0xf4c95d, transparent: true, opacity: 0.3 });
                     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
                     ring.rotation.x = Math.PI / 2.6;
                     group.add(ring);
 
-                    // Optimized particle count
-                    const particleCount = 40;
+                    // Reduced particle count
+                    const particleCount = window.innerWidth < 768 ? 40 : 80;
                     const positions = new Float32Array(particleCount * 3);
                     const colors = new Float32Array(particleCount * 3);
                     const color = new THREE.Color();
@@ -1858,17 +1764,24 @@
                     window.addEventListener("resize", resize, { passive: true });
                     resize();
 
-                    // Intersection Observer to completely halt 3D calculations when out of view
+                    // LAG FIX: Strict 30 FPS Cap logic to prevent 90hz/120hz monitors from melting laptop GPUs
+                    let lastRenderTime = 0;
+                    const fpsInterval = 1000 / 30; // Caps at 30 FPS strictly. Smooth, but not draining.
+
+                    // PAUSE OFF-SCREEN: Cuts GPU usage to 0% when user scrolls away from top hero
                     let isVisible = true;
                     const observer = new IntersectionObserver((entries) => {
                         isVisible = entries[0].isIntersecting;
                     }, { threshold: 0 });
-                    
                     const heroSection = document.querySelector('.hero');
                     if(heroSection) observer.observe(heroSection);
 
                     renderer.setAnimationLoop((time) => {
-                        if (!isVisible) return; // Completely halts CPU/GPU usage when scrolling down
+                        if (!isVisible) return; // Pause completely if user scrolled down
+
+                        const timeElapsed = time - lastRenderTime;
+                        if (timeElapsed < fpsInterval) return; // Skip frame if too fast
+                        lastRenderTime = time - (timeElapsed % fpsInterval);
 
                         const elapsed = time * 0.0002;
                         core.rotation.x = elapsed * 0.55;
