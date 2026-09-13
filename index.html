@@ -866,7 +866,7 @@
                 </button>
             </div>
 
-            <!-- FLEX CLASSES ADDED HERE TO PREVENT SCROLLING OFF SCREEN -->
+            <!-- FLEXBOX FIX ADDED HERE to ensure checkout button never gets pushed off screen -->
             <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
                 <div class="dialog-body space-y-8 p-6">
                     <div class="grid gap-3 sm:grid-cols-4">
@@ -1174,7 +1174,6 @@
                 }
                 if (id === "checkout-modal") {
                     setModalOpen(elements.checkoutModal, false);
-                    // Force button to reset when modal is closed manually
                     const processBtn = $("#pay-button"); 
                     if(processBtn){
                         processBtn.innerHTML = '<i class="fa-solid fa-lock text-xs"></i> Pay $10 deposit and book';
@@ -1599,8 +1598,10 @@
                 updateCheckoutSummary();
                 clearCheckoutErrors();
                 
+                // Show modal first so Stripe can calculate heights correctly
                 setModalOpen(elements.checkoutModal, true);
                 
+                // Slight delay to ensure the display change hits the DOM before mounting Stripe
                 setTimeout(() => {
                     mountStripeCard();
                 }, 50);
@@ -1657,58 +1658,49 @@
                 try {
                     const booking = getBookingDetails();
                     
-                    // Step 1: Create Stripe Token
+                    // Creates token to send to custom Vercel backend endpoint
                     const result = await state.stripe.createToken(state.stripeCard);
 
                     if (result.error) {
                         throw new Error(result.error.message);
                     }
 
-                    // Step 2: Send Token to custom Vercel backend
+                    // Formats a clean list of services and a description for Stripe
+                    const servicesList = state.cart.map(item => {
+                        return item.options.length > 0 ? `${item.name} (${item.options.join(', ')})` : item.name;
+                    }).join(' | ');
+
+                    const paymentDescription = `Appt: ${booking.date} @ ${booking.timeLabel} | Client: ${booking.name}`;
+
                     const response = await fetch(CONFIG.paymentIntentEndpoint, {
                         method: "POST",
-                        headers: { 
-                            "Content-Type": "application/json",
-                            "Accept": "application/json"
-                        },
+                        headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ 
                             token: result.token.id,
-                            amount: BOOKING_DEPOSIT_CENTS, // Force send the amount
+                            amount: BOOKING_DEPOSIT_CENTS,
                             currency: CONFIG.currency,
-                            bookingDetails: {
-                                name: booking.name,
-                                phone: booking.phone,
-                                date: booking.date,
-                                time: booking.timeLabel,
-                                services: state.cart.map(item => item.name).join(', ')
+                            description: paymentDescription,
+                            metadata: {
+                                customer_name: booking.name,
+                                customer_phone: booking.phone,
+                                appointment_date: booking.date,
+                                appointment_time: booking.timeLabel,
+                                services: servicesList
                             }
                         })
                     });
 
-                    // Safely attempt to parse whatever the server replies with
-                    let responseData = {};
-                    try {
-                        responseData = await response.json();
-                    } catch (e) {
-                        throw new Error("Payment server returned an invalid response. Check the Vercel logs.");
-                    }
+                    const responseData = await response.json().catch(() => ({}));
 
-                    if (!response.ok || (!responseData.success && !responseData.clientSecret)) {
-                        throw new Error(responseData.error || responseData.message || `Payment failed on the server.`);
+                    if (!response.ok || !responseData.success) {
+                        throw new Error(responseData.error || `Payment failed on the server.`);
                     }
 
                     showBookingSuccess(result.token.id, booking);
 
                 } catch (error) {
-                    console.error("Payment Error Caught:", error);
-                    let displayError = error.message || "Payment failed. Check your details and try again.";
-                    
-                    // Friendly message if Vercel server is sleeping or CORS blocks it
-                    if (displayError.includes("Failed to fetch")) {
-                        displayError = "Network error: Could not reach the Vercel backend. Make sure the server URL is correct.";
-                    }
-                    
-                    showCheckoutError(displayError);
+                    console.error(error);
+                    showCheckoutError(error.message || "Payment failed. Check your details and try again.");
                 } finally {
                     state.isProcessingPayment = false;
                     elements.payButton.disabled = false;
@@ -1830,6 +1822,7 @@
                     ring.rotation.x = Math.PI / 2.6;
                     group.add(ring);
 
+                    // Reduced particle count for performance
                     const particleCount = window.innerWidth < 768 ? 40 : 80;
                     const positions = new Float32Array(particleCount * 3);
                     const colors = new Float32Array(particleCount * 3);
