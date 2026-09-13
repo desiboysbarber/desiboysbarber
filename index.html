@@ -453,15 +453,21 @@
                             </div>
                         </div>
 
-                        <button onclick="openCheckoutModal()" id="checkoutBtn" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm">
-                            <i class="fas fa-calendar-check mr-2"></i> Confirm Booking
-                        </button>
-                        
-                        <p class="text-center text-xs text-slate-500 mt-4"><i class="fas fa-info-circle mr-1"></i> Pay in-store. Online bookings include a $10 fee.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                    <div id="checkoutModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+    <div class="absolute inset-0 bg-black/90 modal-overlay" onclick="closeModal()"></div>
+    
+    <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-2xl z-20 overflow-hidden transform scale-95 transition-transform duration-300 max-h-[95vh] flex flex-col" id="modalContent">
+        <!-- Modal Inner Content / Form goes here -->
+        
+        <button class="...">
+            <i class="fas fa-calendar-check mr-2"></i> Confirm Booking
+        </button>
+
+        <p class="text-center text-xs text-slate-500 mt-4">
+            <i class="fas fa-info-circle mr-1"></i> Pay in-store. Online bookings include a $10 fee.
+        </p>
+    </div>
+</div>
     </div>
 
     <div id="itemModal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
