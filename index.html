@@ -447,24 +447,23 @@
                                 <span>$10.00</span>
                             </div>
                             
-                          <div class="flex justify-between font-bold text-xl text-white mt-4 border-t border-slate-800 pt-4">
-    <span>Estimated Total</span>
-    <span class="text-yellow-500">$<span id="cartTotal">0.00</span></span>
-</div>
+                            <div class="flex justify-between font-bold text-xl text-white mt-4 border-t border-slate-800 pt-4">
+                                <span>Estimated Total</span>
+                                <span class="text-yellow-500">$<span id="cartTotal">0.00</span></span>
+                            </div>
 
-<!-- PUT THIS BUTTON BACK RIGHT HERE -->
-<button onclick="openCheckoutModal()" class="w-full mt-6 bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold py-3 px-4 rounded transition duration-200 flex items-center justify-center">
-    <i class="fas fa-lock mr-2"></i> Proceed to Secure Checkout
-</button>
+                            <button id="checkoutBtn" onclick="openCheckoutModal()" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm mt-6">
+                                <i class="fas fa-lock mr-2"></i> Proceed to Secure Checkout
+                            </button>
 
-
-
-
-        <p class="text-center text-xs text-slate-500 mt-4">
-            <i class="fas fa-info-circle mr-1"></i> Pay in-store. Online bookings include a $10 fee.
-        </p>
-    </div>
-</div>
+                            <p class="text-center text-xs text-slate-500 mt-4">
+                                <i class="fas fa-info-circle mr-1"></i> Pay in-store. Online bookings include a $10 fee.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="itemModal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
@@ -501,10 +500,10 @@
         </div>
     </div>
 
-    <div id="checkoutModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4">
-        <div class="absolute inset-0 bg-black/80 modal-overlay" onclick="closeModal()"></div>
+    <div id="checkoutModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-black/90 modal-overlay" onclick="closeModal()"></div>
         
-        <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-2xl z-10 overflow-hidden transform scale-95 transition-transform duration-300 max-h-[95vh] flex flex-col" id="modalContent">
+        <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-2xl z-20 overflow-hidden transform scale-95 transition-transform duration-300 max-h-[95vh] flex flex-col" id="modalContent">
             
             <div class="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center flex-shrink-0">
                 <h3 class="font-bold text-xl text-white brand-font tracking-wide">Finalize Appointment & Deposit</h3>
@@ -636,7 +635,7 @@
                     </div>
                 </div>
 
-                <div class="p-6 border-t border-slate-800 bg-slate-950 flex-shrink-0">
+                <div class="p-6 border-t border-slate-800 bg-slate-950 flex-shrink-0 mt-6">
                     <!-- ID added to button for Stripe hooking -->
                     <button id="stripe-submit-btn" onclick="processStripePayment()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-4 px-4 rounded-sm transition flex items-center justify-center tracking-wide shadow-lg shadow-yellow-500/20">
                         <i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book
@@ -777,18 +776,14 @@
     <script>
         // --- STRIPE INTEGRATION LOGIC ---
         
-        // 1. Initialize Stripe with a test key. 
-        // When you are ready for real money, replace 'pk_test_TYooMQauvdEDq54NiTphI7jx' with the barber's actual LIVE Publishable Key.
         const stripe = Stripe('pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2');
         let cardElement; 
         let stripeElementsMounted = false;
 
         function initializeStripeUI() {
-            if (stripeElementsMounted) return; // Prevent mounting twice
+            if (stripeElementsMounted) return;
 
             const elements = stripe.elements();
-            
-            // Custom styling to make the Stripe inputs match your dark theme
             const style = {
                 base: {
                     color: '#ffffff',
@@ -798,7 +793,7 @@
                     '::placeholder': {
                         color: '#475569'
                     },
-                    iconColor: '#eab308' // Yellow icons
+                    iconColor: '#eab308'
                 },
                 invalid: {
                     color: '#ef4444',
@@ -806,14 +801,12 @@
                 }
             };
 
-            // Create the card element and inject it into the HTML div
             cardElement = elements.create('card', {
                 style: style,
-                hidePostalCode: true // <-- THIS REMOVES THE ZIP CODE FIELD
+                hidePostalCode: true
             });
             cardElement.mount('#card-element');
 
-            // Handle real-time validation errors from the card element
             cardElement.on('change', function(event) {
                 const displayError = document.getElementById('card-errors');
                 if (event.error) {
@@ -828,36 +821,25 @@
             stripeElementsMounted = true;
         }
 
-        // 2. The function that runs when they click "Pay & Book"
         function processStripePayment() {
             const btn = document.getElementById('stripe-submit-btn');
             btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Verifying Card...';
             btn.disabled = true;
 
-            // Create the secure token from the card info
             stripe.createToken(cardElement).then(function(result) {
                 if (result.error) {
-                    // Inform the user if there was an error (e.g., declined card)
                     const errorElement = document.getElementById('card-errors');
                     errorElement.textContent = result.error.message;
                     errorElement.classList.remove('hidden');
                     
-                    // Reset button
                     btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
                     btn.disabled = false;
                 } else {
-                    // SUCCESS! We have a secure token.
-                    console.log("Stripe Token Generated:", result.token.id);
-                    
-                    // --- GATHER BOOKING INFO ---
                     const custName = document.getElementById('custName').value;
                     const custPhone = document.getElementById('custPhone').value;
                     const selectedTimeInput = document.querySelector('input[name="time"]:checked');
                     const timeString = selectedTimeInput ? selectedTimeInput.nextElementSibling.innerText : 'No time selected';
                     const cartSummary = cart.map(item => item.name).join(', ');
-
-                    // --- DEVELOPER ROUTE (BACKEND CONNECTION) ---
-                    console.log("Sending payment to Vercel backend...");
                     
                     fetch('https://stripe-backend-sandy-eight.vercel.app/api/charge', {
                         method: 'POST',
@@ -908,9 +890,6 @@
                 successEl.classList.add('scale-100');
             }, 50);
         }
-
-        // --- END STRIPE LOGIC ---
-
 
         // --- GLOBAL STATE ---
         let cart = [];
@@ -973,7 +952,7 @@
 
             if (cart.length === 0) {
                 checkoutBtn.disabled = true;
-                checkoutBtn.className = "w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm";
+                checkoutBtn.className = "w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm mt-6";
                 return;
             }
 
@@ -1006,7 +985,7 @@
             });
 
             checkoutBtn.disabled = false;
-            checkoutBtn.className = "w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font font-bold text-xl py-4 px-4 rounded-sm transition shadow-lg shadow-yellow-500/20 flex items-center justify-center tracking-wide";
+            checkoutBtn.className = "w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font font-bold text-xl py-4 px-4 rounded-sm transition shadow-lg shadow-yellow-500/20 flex items-center justify-center tracking-wide mt-6";
         }
 
         // --- CUSTOMIZATION MODAL LOGIC ---
@@ -1087,7 +1066,6 @@
                 `;
             }
 
-            // Global Note Section
             html += `
                 <div>
                     <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wider">Special Requests</label>
@@ -1156,7 +1134,6 @@
             const modal = document.getElementById('checkoutModal');
             const content = document.getElementById('modalContent');
             
-            // Ensure the form body is visible and success screen is hidden when opening
             document.getElementById('modalBody').classList.remove('hidden');
             const successEl = document.getElementById('modalSuccess');
             if (successEl) {
@@ -1165,8 +1142,6 @@
             }
             
             modal.classList.remove('hidden');
-            
-            // Initialize Stripe elements right when the modal opens
             initializeStripeUI();
 
             setTimeout(() => {
@@ -1214,29 +1189,23 @@
                     processBtn.disabled = false;
                 }
                 
-                // Clear any stripe errors
                 const displayError = document.getElementById('card-errors');
                 if(displayError) {
                     displayError.textContent = '';
                     displayError.classList.add('hidden');
                 }
-                // We optionally could clear the card element using cardElement.clear() here.
                 if (cardElement) { cardElement.clear(); }
 
             }, 500);
         }
 
-        // --- SMART SHOP HOURS LOGIC ---
         function updateShopAvailability() {
             const now = new Date();
-            const day = now.getDay(); 
             const hour = now.getHours();
             const min = now.getMinutes();
             const currentTime = hour + (min / 60);
 
             let isOpen = false;
-
-            // Open 7 Days: 9:30am - 8:00pm
             if (currentTime >= 9.5 && currentTime < 20.0) {
                 isOpen = true;
             }
@@ -1355,13 +1324,6 @@
 
             appendMessage(response, false);
         }
-
     </script>
 </body>
 </html>
-
-
-
-
-
-
