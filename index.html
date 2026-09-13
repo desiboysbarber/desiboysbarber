@@ -149,6 +149,21 @@
             backdrop-filter: blur(18px);
         }
 
+        /* FIREFOX SPECIFIC LAG FIX: Firefox chokes on backdrop-filter over WebGL */
+        @-moz-document url-prefix() {
+            .glass {
+                backdrop-filter: none !important;
+                background: rgba(17, 20, 28, 0.96) !important;
+            }
+            .modal {
+                backdrop-filter: none !important;
+                background: rgba(0, 0, 0, 0.95) !important;
+            }
+            #hero-canvas {
+                opacity: 0.3; /* Lessens composite blending overhead */
+            }
+        }
+
         .section-kicker {
             color: var(--acid);
             font-size: 0.72rem;
@@ -838,7 +853,7 @@
                 </button>
             </div>
 
-            <!-- FLEXBOX FIX to keep the button pinned at the bottom on mobile -->
+            <!-- FLEXBOX FIX APPLIED: Button is pinned to the bottom now -->
             <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
                 <div class="dialog-body space-y-8 p-6">
                     <div class="grid gap-3 sm:grid-cols-4">
@@ -1573,7 +1588,6 @@
                 // Show modal first so Stripe can calculate heights correctly
                 setModalOpen(elements.checkoutModal, true);
                 
-                // Slight delay to ensure the display change hits the DOM before mounting Stripe
                 setTimeout(() => {
                     mountStripeCard();
                 }, 50);
@@ -1630,14 +1644,13 @@
                 try {
                     const booking = getBookingDetails();
                     
-                    // Creates token to send to custom Vercel backend endpoint
                     const result = await state.stripe.createToken(state.stripeCard);
 
                     if (result.error) {
                         throw new Error(result.error.message);
                     }
 
-                    // Prepares the exact text formatting for the Stripe Dashboard
+                    // Pack exactly what the Vercel backend expects to feed into the Stripe Dashboard
                     const servicesList = state.cart.map(item => {
                         return item.options.length > 0 ? `${item.name} (${item.options.join(', ')})` : item.name;
                     }).join(' | ');
