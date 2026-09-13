@@ -859,6 +859,7 @@
                     const cartSummary = cart.map(item => item.name).join(', ');
 
                     // --- DEVELOPER ROUTE (BACKEND CONNECTION) ---
+                    // Notice the clean URL here without any brackets!
                     fetch('https://stripe-backend-sandy-eight.vercel.app/api/charge', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -1150,12 +1151,14 @@
             const modal = document.getElementById('checkoutModal');
             const content = document.getElementById('modalContent');
             
-            // ENSURE PROPER VISIBILITY WHEN RE-OPENING
+            // Ensure the form body is visible and success screen is hidden when opening
             document.getElementById('modalBody').classList.remove('hidden');
             const successContent = document.getElementById('modalSuccess');
-            successContent.classList.add('hidden');
-            successContent.classList.remove('flex', 'flex-col', 'scale-100');
-            
+            if (successContent) {
+                successContent.classList.add('hidden');
+                successContent.classList.remove('flex', 'flex-col', 'scale-100');
+            }
+
             modal.classList.remove('hidden');
             
             // Initialize Stripe elements right when the modal opens
