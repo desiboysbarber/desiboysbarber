@@ -123,9 +123,8 @@
             z-index: -1;
             width: 100%;
             height: 100%;
-            opacity: 0.78;
+            opacity: 0.6;
             pointer-events: none;
-            mix-blend-mode: screen;
         }
 
         .hero-grid {
@@ -1777,13 +1776,12 @@
                     const renderer = new THREE.WebGLRenderer({
                         canvas,
                         alpha: true,
-                        antialias: true,
+                        antialias: false,
                         powerPreference: "low-power"
                     });
 
-                    // Capping pixel ratio to 1.0 on mobile to completely destroy performance lag
-                    const isMobile = window.innerWidth < 768;
-                    renderer.setPixelRatio(isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.6));
+                    // Force pixel ratio to 1.0. This prevents Windows DPI scaling from melting integrated graphics.
+                    renderer.setPixelRatio(1.0);
                     renderer.setClearColor(0x000000, 0);
 
                     const group = new THREE.Group();
@@ -1794,14 +1792,14 @@
                     const core = new THREE.Mesh(coreGeometry, coreMaterial);
                     group.add(core);
 
-                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 160);
+                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 64);
                     const ringMaterial = new THREE.MeshBasicMaterial({ color: 0xf4c95d, transparent: true, opacity: 0.3 });
                     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
                     ring.rotation.x = Math.PI / 2.6;
                     group.add(ring);
 
-                    // Reduced particle count heavily for performance
-                    const particleCount = isMobile ? 30 : 60;
+                    // Universal low particle count
+                    const particleCount = 40;
                     const positions = new Float32Array(particleCount * 3);
                     const colors = new Float32Array(particleCount * 3);
                     const color = new THREE.Color();
@@ -1856,18 +1854,8 @@
                     const heroSection = document.querySelector('.hero');
                     if(heroSection) observer.observe(heroSection);
 
-                    // PERFORMANCE FIX: 10 FPS cap
-                    let lastRenderTime = 0;
-                    const fpsInterval = 1000 / 10;
-
                     renderer.setAnimationLoop((time) => {
                         if (!isVisible) return; // Completely halts CPU/GPU usage when out of view
-
-                        // Throttle rendering to target 10 FPS
-                        const timeDelta = time - lastRenderTime;
-                        if (timeDelta < fpsInterval) return; 
-                        
-                        lastRenderTime = time - (timeDelta % fpsInterval);
 
                         const elapsed = time * 0.0002;
                         core.rotation.x = elapsed * 0.55;
