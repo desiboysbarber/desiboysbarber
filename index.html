@@ -421,30 +421,6 @@
             height: 100%;
         }
 
-        #toast {
-            position: fixed;
-            right: 1.25rem;
-            bottom: 1.25rem;
-            z-index: 150;
-            max-width: min(360px, calc(100vw - 2.5rem));
-            padding: 0.9rem 1rem;
-            border: 1px solid rgba(217, 255, 79, 0.35);
-            color: #f8fafc;
-            background: rgba(17, 20, 28, 0.96);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(12px);
-            transition:
-                opacity 180ms ease,
-                transform 180ms ease;
-        }
-
-        #toast.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
         .hero-copy {
             animation: hero-rise 700ms ease both;
         }
@@ -1805,7 +1781,9 @@
                         powerPreference: "low-power"
                     });
 
-                    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+                    // Capping pixel ratio to 1.0 on mobile to completely destroy performance lag
+                    const isMobile = window.innerWidth < 768;
+                    renderer.setPixelRatio(isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.6));
                     renderer.setClearColor(0x000000, 0);
 
                     const group = new THREE.Group();
@@ -1822,8 +1800,8 @@
                     ring.rotation.x = Math.PI / 2.6;
                     group.add(ring);
 
-                    // Reduced particle count for performance
-                    const particleCount = window.innerWidth < 768 ? 40 : 80;
+                    // Reduced particle count heavily for performance
+                    const particleCount = isMobile ? 30 : 60;
                     const positions = new Float32Array(particleCount * 3);
                     const colors = new Float32Array(particleCount * 3);
                     const color = new THREE.Color();
@@ -1885,7 +1863,7 @@
                     renderer.setAnimationLoop((time) => {
                         if (!isVisible) return; // Completely halts CPU/GPU usage when out of view
 
-                        // Throttle rendering to target FPS
+                        // Throttle rendering to target 10 FPS
                         const timeDelta = time - lastRenderTime;
                         if (timeDelta < fpsInterval) return; 
                         
