@@ -1150,7 +1150,7 @@
             }, 10);
         }
 
-        function closeModal() {
+       function closeModal() {
             const modal = document.getElementById('checkoutModal');
             const content = document.getElementById('modalContent');
             const successContent = document.getElementById('modalSuccess');
@@ -1162,6 +1162,13 @@
             if(successContent && !successContent.classList.contains('hidden')){
                  successContent.classList.remove('scale-100');
                  successContent.classList.add('scale-95');
+            }
+            
+            // Reset the submit button back to normal when closing
+            const processBtn = document.querySelector('#stripe-submit-btn'); 
+            if(processBtn){
+                processBtn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
+                processBtn.disabled = false;
             }
             
             setTimeout(() => {
@@ -1327,3 +1334,4 @@
     </script>
 </body>
 </html>
+
