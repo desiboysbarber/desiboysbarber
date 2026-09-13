@@ -126,8 +126,6 @@
             opacity: 0.78;
             pointer-events: none;
             mix-blend-mode: screen;
-            /* Hardware acceleration hint */
-            will-change: transform;
         }
 
         .hero-grid {
@@ -310,6 +308,7 @@
         }
 
         .dialog-body {
+            flex: 1 1 auto;
             min-height: 0;
             overflow-y: auto;
             overscroll-behavior: contain;
@@ -401,6 +400,7 @@
             word-break: break-word;
         }
 
+        /* Stripe Element specific styling */
         .stripe-card {
             min-height: 44px;
             padding: 0.75rem;
@@ -419,6 +419,30 @@
         .StripeElement {
             width: 100%;
             height: 100%;
+        }
+
+        #toast {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 150;
+            max-width: min(360px, calc(100vw - 2.5rem));
+            padding: 0.9rem 1rem;
+            border: 1px solid rgba(217, 255, 79, 0.35);
+            color: #f8fafc;
+            background: rgba(17, 20, 28, 0.96);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition:
+                opacity 180ms ease,
+                transform 180ms ease;
+        }
+
+        #toast.is-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .hero-copy {
@@ -842,8 +866,8 @@
                 </button>
             </div>
 
-            <!-- FIX: Added 'flex flex-1 flex-col min-h-0' so the footer button doesn't overflow -->
-            <form id="checkout-form" class="flex flex-1 flex-col min-h-0" novalidate>
+            <!-- FLEX CLASSES ADDED HERE TO PREVENT SCROLLING OFF SCREEN -->
+            <form id="checkout-form" novalidate class="flex flex-1 flex-col min-h-0">
                 <div class="dialog-body space-y-8 p-6">
                     <div class="grid gap-3 sm:grid-cols-4">
                         <div class="border border-white/10 bg-white/[0.03] p-4 sm:col-span-2">
@@ -1150,6 +1174,7 @@
                 }
                 if (id === "checkout-modal") {
                     setModalOpen(elements.checkoutModal, false);
+                    // Force button to reset when modal is closed manually
                     const processBtn = $("#pay-button"); 
                     if(processBtn){
                         processBtn.innerHTML = '<i class="fa-solid fa-lock text-xs"></i> Pay $10 deposit and book';
@@ -1574,10 +1599,8 @@
                 updateCheckoutSummary();
                 clearCheckoutErrors();
                 
-                // Show modal first so Stripe can calculate heights correctly
                 setModalOpen(elements.checkoutModal, true);
                 
-                // Slight delay to ensure the display change hits the DOM before mounting Stripe
                 setTimeout(() => {
                     mountStripeCard();
                 }, 50);
@@ -1634,38 +1657,58 @@
                 try {
                     const booking = getBookingDetails();
                     
-                    // Creates token to send to custom Vercel backend endpoint
+                    // Step 1: Create Stripe Token
                     const result = await state.stripe.createToken(state.stripeCard);
 
                     if (result.error) {
                         throw new Error(result.error.message);
                     }
 
+                    // Step 2: Send Token to custom Vercel backend
                     const response = await fetch(CONFIG.paymentIntentEndpoint, {
                         method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                        headers: { 
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
                         body: JSON.stringify({ 
                             token: result.token.id,
+                            amount: BOOKING_DEPOSIT_CENTS, // Force send the amount
+                            currency: CONFIG.currency,
                             bookingDetails: {
                                 name: booking.name,
                                 phone: booking.phone,
+                                date: booking.date,
                                 time: booking.timeLabel,
                                 services: state.cart.map(item => item.name).join(', ')
                             }
                         })
                     });
 
-                    const responseData = await response.json().catch(() => ({}));
+                    // Safely attempt to parse whatever the server replies with
+                    let responseData = {};
+                    try {
+                        responseData = await response.json();
+                    } catch (e) {
+                        throw new Error("Payment server returned an invalid response. Check the Vercel logs.");
+                    }
 
-                    if (!response.ok || !responseData.success) {
-                        throw new Error(responseData.error || `Payment failed on the server.`);
+                    if (!response.ok || (!responseData.success && !responseData.clientSecret)) {
+                        throw new Error(responseData.error || responseData.message || `Payment failed on the server.`);
                     }
 
                     showBookingSuccess(result.token.id, booking);
 
                 } catch (error) {
-                    console.error(error);
-                    showCheckoutError(error.message || "Payment failed. Check your details and try again.");
+                    console.error("Payment Error Caught:", error);
+                    let displayError = error.message || "Payment failed. Check your details and try again.";
+                    
+                    // Friendly message if Vercel server is sleeping or CORS blocks it
+                    if (displayError.includes("Failed to fetch")) {
+                        displayError = "Network error: Could not reach the Vercel backend. Make sure the server URL is correct.";
+                    }
+                    
+                    showCheckoutError(displayError);
                 } finally {
                     state.isProcessingPayment = false;
                     elements.payButton.disabled = false;
@@ -1770,9 +1813,7 @@
                         powerPreference: "low-power"
                     });
 
-                    // FIX LAG: Limit pixel ratio on mobile so it doesn't try to render 3x/4x retina resolution
-                    const pixelRatio = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
-                    renderer.setPixelRatio(pixelRatio);
+                    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
                     renderer.setClearColor(0x000000, 0);
 
                     const group = new THREE.Group();
@@ -1789,7 +1830,6 @@
                     ring.rotation.x = Math.PI / 2.6;
                     group.add(ring);
 
-                    // FIX LAG: Halved the particle count for mobile
                     const particleCount = window.innerWidth < 768 ? 40 : 80;
                     const positions = new Float32Array(particleCount * 3);
                     const colors = new Float32Array(particleCount * 3);
@@ -1836,7 +1876,7 @@
                     window.addEventListener("resize", resize, { passive: true });
                     resize();
 
-                    // FIX LAG: Add Intersection Observer to PAUSE rendering when scrolling past hero section
+                    // PERFORMANCE FIX: Intersection Observer to pause rendering when out of view
                     let isVisible = true;
                     const observer = new IntersectionObserver((entries) => {
                         isVisible = entries[0].isIntersecting;
@@ -1845,8 +1885,18 @@
                     const heroSection = document.querySelector('.hero');
                     if(heroSection) observer.observe(heroSection);
 
+                    // PERFORMANCE FIX: 35 FPS cap
+                    let lastRenderTime = 0;
+                    const fpsInterval = 1000 / 35;
+
                     renderer.setAnimationLoop((time) => {
                         if (!isVisible) return; // Completely halts CPU/GPU usage when out of view
+
+                        // Throttle rendering to target FPS
+                        const timeDelta = time - lastRenderTime;
+                        if (timeDelta < fpsInterval) return; 
+                        
+                        lastRenderTime = time - (timeDelta % fpsInterval);
 
                         const elapsed = time * 0.0002;
                         core.rotation.x = elapsed * 0.55;
