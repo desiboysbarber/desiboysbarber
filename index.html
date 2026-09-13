@@ -1878,9 +1878,9 @@
                     const heroSection = document.querySelector('.hero');
                     if(heroSection) observer.observe(heroSection);
 
-                    // PERFORMANCE FIX: 35 FPS cap
+                    // PERFORMANCE FIX: 10 FPS cap
                     let lastRenderTime = 0;
-                    const fpsInterval = 1000 / 35;
+                    const fpsInterval = 1000 / 10;
 
                     renderer.setAnimationLoop((time) => {
                         if (!isVisible) return; // Completely halts CPU/GPU usage when out of view
