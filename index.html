@@ -847,19 +847,15 @@
                     console.log("Stripe Token Generated:", result.token.id);
                     
                     // --- GATHER BOOKING INFO ---
-                    // 1. Get Name and Phone
                     const custName = document.getElementById('custName').value;
                     const custPhone = document.getElementById('custPhone').value;
-                    
-                    // 2. Get Selected Time
                     const selectedTimeInput = document.querySelector('input[name="time"]:checked');
                     const timeString = selectedTimeInput ? selectedTimeInput.nextElementSibling.innerText : 'No time selected';
-                    
-                    // 3. Summarize Cart Services
                     const cartSummary = cart.map(item => item.name).join(', ');
 
                     // --- DEVELOPER ROUTE (BACKEND CONNECTION) ---
-                    // Notice the clean URL here without any brackets!
+                    console.log("Sending payment to Vercel backend...");
+                    
                     fetch('https://stripe-backend-sandy-eight.vercel.app/api/charge', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -873,17 +869,23 @@
                             }
                         })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Server returned status: " + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if(data.success) {
                             showSuccessScreen();
                         } else {
-                            throw new Error(data.error || "Payment failed to process");
+                            throw new Error(data.error || "Payment failed on the server.");
                         }
                     })
                     .catch(error => {
+                        console.error("Fetch Error:", error);
                         const errorElement = document.getElementById('card-errors');
-                        errorElement.textContent = error.message;
+                        errorElement.textContent = "Network Error: " + error.message;
                         errorElement.classList.remove('hidden');
                         btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
                         btn.disabled = false;
@@ -1153,12 +1155,12 @@
             
             // Ensure the form body is visible and success screen is hidden when opening
             document.getElementById('modalBody').classList.remove('hidden');
-            const successContent = document.getElementById('modalSuccess');
-            if (successContent) {
-                successContent.classList.add('hidden');
-                successContent.classList.remove('flex', 'flex-col', 'scale-100');
+            const successEl = document.getElementById('modalSuccess');
+            if (successEl) {
+                successEl.classList.add('hidden');
+                successEl.classList.remove('flex', 'flex-col', 'scale-100');
             }
-
+            
             modal.classList.remove('hidden');
             
             // Initialize Stripe elements right when the modal opens
