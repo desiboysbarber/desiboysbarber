@@ -126,6 +126,8 @@
             opacity: 0.78;
             pointer-events: none;
             mix-blend-mode: screen;
+            /* Hardware acceleration hint */
+            will-change: transform;
         }
 
         .hero-grid {
@@ -399,7 +401,6 @@
             word-break: break-word;
         }
 
-        /* Stripe Element specific styling */
         .stripe-card {
             min-height: 44px;
             padding: 0.75rem;
@@ -841,7 +842,8 @@
                 </button>
             </div>
 
-            <form id="checkout-form" novalidate>
+            <!-- FIX: Added 'flex flex-1 flex-col min-h-0' so the footer button doesn't overflow -->
+            <form id="checkout-form" class="flex flex-1 flex-col min-h-0" novalidate>
                 <div class="dialog-body space-y-8 p-6">
                     <div class="grid gap-3 sm:grid-cols-4">
                         <div class="border border-white/10 bg-white/[0.03] p-4 sm:col-span-2">
@@ -1768,7 +1770,9 @@
                         powerPreference: "low-power"
                     });
 
-                    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+                    // FIX LAG: Limit pixel ratio on mobile so it doesn't try to render 3x/4x retina resolution
+                    const pixelRatio = window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
+                    renderer.setPixelRatio(pixelRatio);
                     renderer.setClearColor(0x000000, 0);
 
                     const group = new THREE.Group();
@@ -1785,7 +1789,7 @@
                     ring.rotation.x = Math.PI / 2.6;
                     group.add(ring);
 
-                    // Reduced particle count for performance
+                    // FIX LAG: Halved the particle count for mobile
                     const particleCount = window.innerWidth < 768 ? 40 : 80;
                     const positions = new Float32Array(particleCount * 3);
                     const colors = new Float32Array(particleCount * 3);
@@ -1832,7 +1836,18 @@
                     window.addEventListener("resize", resize, { passive: true });
                     resize();
 
+                    // FIX LAG: Add Intersection Observer to PAUSE rendering when scrolling past hero section
+                    let isVisible = true;
+                    const observer = new IntersectionObserver((entries) => {
+                        isVisible = entries[0].isIntersecting;
+                    }, { threshold: 0 });
+                    
+                    const heroSection = document.querySelector('.hero');
+                    if(heroSection) observer.observe(heroSection);
+
                     renderer.setAnimationLoop((time) => {
+                        if (!isVisible) return; // Completely halts CPU/GPU usage when out of view
+
                         const elapsed = time * 0.0002;
                         core.rotation.x = elapsed * 0.55;
                         core.rotation.y = elapsed * 0.8;
