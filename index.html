@@ -1787,12 +1787,14 @@
                     const group = new THREE.Group();
                     scene.add(group);
 
-                    const coreGeometry = new THREE.IcosahedronGeometry(2.25, 2);
+                    /* DRASTICALLY reduced geometry vertices for integrated graphics */
+                    const coreGeometry = new THREE.IcosahedronGeometry(2.25, 1);
                     const coreMaterial = new THREE.MeshBasicMaterial({ color: 0xd9ff4f, wireframe: true, transparent: true, opacity: 0.12 });
                     const core = new THREE.Mesh(coreGeometry, coreMaterial);
                     group.add(core);
 
-                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 64);
+                    /* Lowered ring segments from 160 to 32 */
+                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 4, 32);
                     const ringMaterial = new THREE.MeshBasicMaterial({ color: 0xf4c95d, transparent: true, opacity: 0.3 });
                     const ring = new THREE.Mesh(ringGeometry, ringMaterial);
                     ring.rotation.x = Math.PI / 2.6;
