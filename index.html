@@ -3,1335 +3,2661 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#080a10">
     <title>Desi Boys Barber | Harris Park</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- STRIPE JS INTEGRATION -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: "#080a10",
+                        panel: "#11141c",
+                        panel2: "#171b25",
+                        acid: "#d9ff4f",
+                        gold: "#f4c95d"
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                        body: ["DM Sans", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Inter:wght@300;400;600;700&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
-            color: #f8fafc;
+        :root {
+            --ink: #080a10;
+            --panel: #11141c;
+            --panel-2: #171b25;
+            --line: rgba(255, 255, 255, 0.1);
+            --muted: #8c93a5;
+            --acid: #d9ff4f;
+            --gold: #f4c95d;
+            --danger: #ff7070;
+            --success: #72e2a1;
         }
-        
-        h1, h2, h3, h4, .brand-font {
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
+
+        * {
+            box-sizing: border-box;
         }
-        
-        .hero-pattern {
-            background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-        
+
         html {
             scroll-behavior: smooth;
+            background: var(--ink);
         }
 
-        /* Cart Animation */
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .pop-anim {
-            animation: pop 0.3s ease-out;
+        body {
+            min-width: 320px;
+            margin: 0;
+            overflow-x: hidden;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(217, 255, 79, 0.08), transparent 24rem),
+                radial-gradient(circle at 90% 20%, rgba(91, 100, 255, 0.09), transparent 30rem),
+                var(--ink);
+            color: #f8fafc;
+            font-family: "DM Sans", sans-serif;
         }
 
-        /* Custom Scrollbar */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        .font-display {
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        ::selection {
+            color: var(--ink);
+            background: var(--acid);
+        }
+
+        a,
+        button,
+        input,
+        textarea {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+        }
+
+        .hero {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            min-height: min(820px, 92vh);
+            background:
+                linear-gradient(115deg, rgba(8, 10, 16, 0.96) 0%, rgba(8, 10, 16, 0.74) 44%, rgba(8, 10, 16, 0.28) 100%),
+                url("https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=85&w=1800") center / cover;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(to bottom, transparent 60%, var(--ink) 100%),
+                radial-gradient(circle at 70% 30%, rgba(217, 255, 79, 0.14), transparent 22rem);
+        }
+
+        #hero-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            width: 100%;
+            height: 100%;
+            opacity: 0.78;
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.16;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: linear-gradient(to bottom, black, transparent 78%);
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            pointer-events: none;
+            opacity: 0.026;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+        }
+
+        .glass {
+            background: rgba(17, 20, 28, 0.72);
+            border: 1px solid var(--line);
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.26);
+            backdrop-filter: blur(18px);
+        }
+
+        .section-kicker {
+            color: var(--acid);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+        }
+
+        .acid-button {
+            color: var(--ink);
+            background: var(--acid);
+            box-shadow: 0 10px 35px rgba(217, 255, 79, 0.18);
+            transition:
+                transform 180ms ease,
+                box-shadow 180ms ease,
+                background-color 180ms ease;
+        }
+
+        .acid-button:hover {
+            background: #e8ff88;
+            box-shadow: 0 16px 45px rgba(217, 255, 79, 0.28);
+            transform: translateY(-2px);
+        }
+
+        .ghost-button {
+            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.04);
+            transition:
+                background-color 180ms ease,
+                border-color 180ms ease,
+                transform 180ms ease;
+        }
+
+        .ghost-button:hover {
+            border-color: rgba(217, 255, 79, 0.62);
+            background: rgba(217, 255, 79, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .service-card {
+            position: relative;
+            display: flex;
+            min-height: 220px;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 48%),
+                var(--panel);
+            transition:
+                border-color 180ms ease,
+                transform 180ms ease,
+                box-shadow 180ms ease;
+        }
+
+        .service-card::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            border-radius: 999px;
+            background: rgba(217, 255, 79, 0.08);
+            filter: blur(30px);
+            transition: transform 260ms ease;
+        }
+
+        .service-card:hover {
+            border-color: rgba(217, 255, 79, 0.44);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+            transform: translateY(-4px);
+        }
+
+        .service-card:hover::before {
+            transform: scale(1.7);
+        }
+
+        .service-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-icon {
+            display: grid;
+            width: 42px;
+            height: 42px;
+            place-items: center;
+            border: 1px solid rgba(217, 255, 79, 0.2);
+            color: var(--acid);
+            background: rgba(217, 255, 79, 0.08);
+        }
+
+        .service-input,
+        .service-textarea {
+            width: 100%;
+            border: 1px solid var(--line);
+            outline: none;
+            color: #f8fafc;
+            background: var(--panel-2);
+            transition:
+                border-color 180ms ease,
+                box-shadow 180ms ease;
+        }
+
+        .service-input:focus,
+        .service-textarea:focus {
+            border-color: rgba(217, 255, 79, 0.8);
+            box-shadow: 0 0 0 3px rgba(217, 255, 79, 0.1);
+        }
+
+        .service-input[aria-invalid="true"],
+        .service-textarea[aria-invalid="true"] {
+            border-color: rgba(255, 112, 112, 0.9);
+            box-shadow: 0 0 0 3px rgba(255, 112, 112, 0.1);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            isolation: isolate;
+            background: rgba(0, 0, 0, 0.76);
+            backdrop-filter: blur(14px);
+            animation: modal-fade-in 160ms ease both;
+            overscroll-behavior: contain;
+        }
+
+        .modal[hidden] {
+            display: none;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            inset: 0;
+        }
+
+        .dialog {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            width: min(100%, 640px);
+            max-height: calc(100dvh - 2rem);
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: var(--panel);
+            box-shadow: 0 30px 120px rgba(0, 0, 0, 0.5);
+            animation: dialog-slide-in 180ms ease both;
+        }
+
+        .dialog-header,
+        .dialog-footer {
+            flex: 0 0 auto;
+            border-color: var(--line);
+            background: rgba(8, 10, 16, 0.75);
+        }
+
+        .dialog-body {
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        .dialog-body::-webkit-scrollbar,
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
         }
+
+        .dialog-body::-webkit-scrollbar-thumb,
         .custom-scroll::-webkit-scrollbar-thumb {
-            background-color: #334155;
-            border-radius: 10px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background-color: #1e293b;
+            border-radius: 999px;
+            background: #394151;
         }
 
-        /* Custom Checkbox/Radio Styling */
-        input[type="checkbox"], input[type="radio"] {
-            accent-color: #eab308; /* Yellow 500 */
+        .dialog-body::-webkit-scrollbar-track,
+        .custom-scroll::-webkit-scrollbar-track {
+            background: transparent;
         }
-        
-        /* Stripe Element Container */
-        .StripeElement {
-            box-sizing: border-box;
-            height: 40px;
-            padding: 10px 12px;
-            border: 1px solid transparent;
-            border-radius: 4px;
-            background-color: transparent;
-            transition: box-shadow 150ms ease;
+
+        .option-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            transition:
+                border-color 180ms ease,
+                background-color 180ms ease;
+        }
+
+        .option-row:hover {
+            border-color: rgba(217, 255, 79, 0.5);
+            background: rgba(217, 255, 79, 0.06);
+        }
+
+        .option-row input {
+            accent-color: var(--acid);
+        }
+
+        .cart-empty {
+            min-height: 190px;
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+        }
+
+        .cart-item {
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+        }
+
+        .lookbook-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(0.72);
+            transition:
+                transform 500ms ease,
+                filter 500ms ease;
+        }
+
+        .lookbook-tile:hover .lookbook-image {
+            filter: saturate(1.1);
+            transform: scale(1.06);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--success);
+            box-shadow: 0 0 0 5px rgba(114, 226, 161, 0.1);
+        }
+
+        .status-dot.closed {
+            background: var(--danger);
+            box-shadow: 0 0 0 5px rgba(255, 112, 112, 0.1);
+        }
+
+        .chat-panel {
+            transform-origin: bottom right;
+            animation: chat-in 180ms ease both;
+        }
+
+        .chat-panel[hidden] {
+            display: none;
+        }
+
+        .chat-message {
+            max-width: 88%;
+            word-break: break-word;
+        }
+
+        #toast {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            z-index: 150;
+            max-width: min(360px, calc(100vw - 2.5rem));
+            padding: 0.9rem 1rem;
+            border: 1px solid rgba(217, 255, 79, 0.35);
+            color: #f8fafc;
+            background: rgba(17, 20, 28, 0.96);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(12px);
+            transition:
+                opacity 180ms ease,
+                transform 180ms ease;
+        }
+
+        #toast.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stripe-card {
+            min-height: 44px;
+            padding: 0.75rem;
+            border: 1px solid var(--line);
+            background: var(--panel-2);
+            transition:
+                border-color 180ms ease,
+                box-shadow 180ms ease;
+        }
+
+        .stripe-card:focus-within {
+            border-color: rgba(217, 255, 79, 0.8);
+            box-shadow: 0 0 0 3px rgba(217, 255, 79, 0.1);
+        }
+
+        .hero-copy {
+            animation: hero-rise 700ms ease both;
+        }
+
+        @keyframes modal-fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes dialog-slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(12px) scale(0.985);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes chat-in {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes hero-rise {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                min-height: 760px;
+                background-position: 58% center;
+            }
+
+            #hero-canvas {
+                opacity: 0.52;
+            }
+
+            .dialog {
+                max-height: calc(100dvh - 1rem);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+
+            #hero-canvas {
+                display: none;
+            }
         }
     </style>
 </head>
-<body class="antialiased relative">
-    
-    <nav class="bg-slate-900/95 backdrop-blur-sm shadow-sm fixed w-full z-40 top-0 border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
-                <div class="flex items-center">
-                    <span class="brand-font font-bold text-3xl tracking-tight text-white uppercase flex items-center gap-2">
-                        <span class="text-yellow-500">DESI BOYS</span> BARBER
-                    </span>
-                </div>
-                <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
-                    <a href="#about" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">The Shop</a>
-                    <a href="#gallery" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">Lookbook</a>
-                    <a href="#services" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">Services</a>
-                    <a href="#location" class="text-slate-300 hover:text-yellow-500 transition font-medium tracking-wide">Location</a>
-                    <a href="#services" class="bg-yellow-500 text-slate-900 px-6 py-2.5 rounded-sm brand-font font-bold text-lg hover:bg-yellow-400 transition shadow-lg shadow-yellow-500/20">
-                        Book Appointment
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
 
-    <div class="hero-pattern h-[80vh] flex items-center justify-center mt-20 relative">
-        <div class="text-center px-4 z-10 w-full max-w-4xl">
-            <span class="uppercase tracking-[0.4em] text-sm font-bold mb-4 block text-yellow-500">Harris Park, NSW</span>
-            <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white tracking-wide">Fresh Fades.<br>Sharp Lines.</h1>
-            <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto font-light text-slate-300">Premium men's grooming, beard sculpting, and traditional threading. Walk in or secure your spot online.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#services" class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-4 px-10 rounded-sm transition transform hover:-translate-y-1 shadow-xl shadow-yellow-500/20">
-                    View Services & Book
+<body>
+    <div class="noise" aria-hidden="true"></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-xl">
+        <nav class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10" aria-label="Primary navigation">
+            <a href="#top" class="font-display text-lg font-bold tracking-tight text-white sm:text-xl">
+                <span class="text-acid">DESI BOYS</span>
+                <span class="text-white">BARBER</span>
+            </a>
+
+            <div class="hidden items-center gap-7 md:flex">
+                <a href="#about" class="text-sm font-semibold text-slate-300 transition hover:text-acid">The Shop</a>
+                <a href="#gallery" class="text-sm font-semibold text-slate-300 transition hover:text-acid">Lookbook</a>
+                <a href="#services" class="text-sm font-semibold text-slate-300 transition hover:text-acid">Services</a>
+                <a href="#location" class="text-sm font-semibold text-slate-300 transition hover:text-acid">Location</a>
+                <a href="#services" class="acid-button px-5 py-3 font-display text-sm font-bold uppercase tracking-wide">
+                    Book Appointment
+                </a>
+            </div>
+
+            <button
+                id="mobile-menu-button"
+                type="button"
+                class="grid h-11 w-11 place-items-center border border-white/10 bg-white/5 text-white md:hidden"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+                aria-label="Open navigation menu"
+            >
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </nav>
+
+        <div id="mobile-menu" hidden class="border-t border-white/10 bg-ink/95 px-5 py-5 md:hidden">
+            <div class="flex flex-col gap-1">
+                <a href="#about" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">The Shop</a>
+                <a href="#gallery" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Lookbook</a>
+                <a href="#services" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Services</a>
+                <a href="#location" class="mobile-nav-link px-3 py-3 text-sm font-semibold text-slate-300">Location</a>
+                <a href="#services" class="acid-button mt-2 px-4 py-3 text-center font-display text-sm font-bold uppercase tracking-wide">
+                    Book Appointment
                 </a>
             </div>
         </div>
-    </div>
+    </header>
 
-    <div id="about" class="py-24 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4 text-white tracking-wide">The Barber Lane Standard</h2>
-                <div class="w-20 h-1 bg-yellow-500 mx-auto"></div>
-                <p class="mt-6 text-slate-400 max-w-2xl mx-auto text-lg">We bring precision and style to every cut. Whether you need a quick crew cut or a full facial and head massage, we've got you covered.</p>
-            </div>
+    <main id="top">
+        <section class="hero flex items-center pt-20">
+            <canvas id="hero-canvas" aria-hidden="true"></canvas>
+            <div class="hero-grid" aria-hidden="true"></div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-8 bg-slate-800 rounded-sm border border-slate-700 hover:border-yellow-500/50 transition duration-300 group">
-                    <div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-500 text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                        <i class="fas fa-cut"></i>
+            <div class="mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-10">
+                <div class="hero-copy max-w-4xl">
+                    <div class="mb-6 flex flex-wrap items-center gap-3">
+                        <span class="section-kicker">Harris Park, NSW</span>
+                        <span class="h-px w-14 bg-acid/60"></span>
+                        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Open 7 days</span>
                     </div>
-                    <h3 class="text-2xl font-bold mb-3 text-white">Precision Cuts</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">From standard style cuts to flawless skin fades. Our barbers pay attention to every detail.</p>
-                </div>
-                
-                <div class="text-center p-8 bg-slate-800 rounded-sm border border-slate-700 hover:border-yellow-500/50 transition duration-300 group">
-                    <div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-500 text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                        <i class="fas fa-spa"></i>
+
+                    <h1 class="max-w-4xl font-display text-5xl font-bold leading-[0.94] tracking-[-0.06em] text-white sm:text-7xl lg:text-[8.5rem]">
+                        Fresh fades.
+                        <span class="block text-acid">Sharp lines.</span>
+                    </h1>
+
+                    <p class="mt-8 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
+                        A modern barber experience built around precision cuts, beard sculpting,
+                        threading, and grooming that leaves you looking ready for anything.
+                    </p>
+
+                    <div class="mt-10 flex flex-col gap-3 sm:flex-row">
+                        <a href="#services" class="acid-button inline-flex items-center justify-center gap-3 px-7 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                            View Services
+                            <i class="fa-solid fa-arrow-down-long text-xs"></i>
+                        </a>
+                        <a href="#location" class="ghost-button inline-flex items-center justify-center gap-3 px-7 py-4 font-display text-sm font-bold uppercase tracking-wide">
+                            Find The Shop
+                            <i class="fa-solid fa-location-dot text-xs text-acid"></i>
+                        </a>
                     </div>
-                    <h3 class="text-2xl font-bold mb-3 text-white">Grooming & Facials</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">Relax with our head massages, scrubs, and full facials designed to rejuvenate your skin.</p>
-                </div>
 
-                <div class="text-center p-8 bg-slate-800 rounded-sm border border-slate-700 hover:border-yellow-500/50 transition duration-300 group">
-                    <div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 text-yellow-500 text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                        <i class="fas fa-gem"></i>
+                    <div class="mt-14 grid max-w-xl grid-cols-3 gap-4 border-t border-white/10 pt-6">
+                        <div>
+                            <p class="font-display text-2xl font-bold text-white">7</p>
+                            <p class="mt-1 text-xs uppercase tracking-wider text-slate-500">Days open</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-2xl font-bold text-white">9:30</p>
+                            <p class="mt-1 text-xs uppercase tracking-wider text-slate-500">Opening time</p>
+                        </div>
+                        <div>
+                            <p class="font-display text-2xl font-bold text-white">$15</p>
+                            <p class="mt-1 text-xs uppercase tracking-wider text-slate-500">Cuts from</p>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold mb-3 text-white">Threading Experts</h3>
-                    <p class="text-slate-400 leading-relaxed text-sm">Precise threading for eyebrows, forehead, cheeks, or full face for clean, sharp results.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="gallery" class="py-24 bg-slate-900 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4 text-white tracking-wide">The Lookbook</h2>
-                <div class="w-20 h-1 bg-yellow-500 mx-auto"></div>
-                <p class="mt-6 text-slate-400 max-w-2xl mx-auto text-lg">Quality you can see. Browse our recent cuts.</p>
-            </div>
-
-            <!-- Masonry-style Grid -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="col-span-2 row-span-2 rounded-sm overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Fade Cut">
-                </div>
-                <div class="rounded-sm overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=300" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Beard Trim">
-                </div>
-                <div class="rounded-sm overflow-hidden group">
-                    <img src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=80&w=300" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Scissor Cut">
-                </div>
-                <div class="col-span-2 rounded-sm overflow-hidden group h-48">
-                    <img src="https://images.unsplash.com/photo-1534723452862-4c8765377f3f?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Barber Tools">
                 </div>
             </div>
-            
-            <div class="mt-12 text-center">
-                 <a href="#" class="inline-flex items-center text-yellow-500 hover:text-white transition font-bold uppercase tracking-wider text-sm">
-                    <i class="fab fa-instagram text-xl mr-2"></i> Follow us on Instagram
-                </a>
+        </section>
+
+        <section id="about" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+                    <div>
+                        <p class="section-kicker">The Barber Lane Standard</p>
+                        <h2 class="mt-5 max-w-xl font-display text-4xl font-bold leading-tight tracking-[-0.04em] text-white sm:text-6xl">
+                            Clean work. No shortcuts.
+                        </h2>
+                    </div>
+
+                    <p class="max-w-2xl text-lg leading-8 text-slate-400">
+                        Every service is shaped around detail, consistency, and a finish that still looks
+                        right after you leave the chair.
+                    </p>
+                </div>
+
+                <div class="mt-16 grid gap-4 md:grid-cols-3">
+                    <article class="glass p-7">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-scissors"></i>
+                        </div>
+                        <h3 class="mt-8 font-display text-2xl font-bold text-white">Precision cuts</h3>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">
+                            From machine cuts to skin fades, every line is finished with intent.
+                        </p>
+                    </article>
+
+                    <article class="glass p-7">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-sparkles"></i>
+                        </div>
+                        <h3 class="mt-8 font-display text-2xl font-bold text-white">Grooming rituals</h3>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">
+                            Beard shaping, facials, scrubs, and head massages for a complete reset.
+                        </p>
+                    </article>
+
+                    <article class="glass p-7">
+                        <div class="service-icon">
+                            <i class="fa-solid fa-gem"></i>
+                        </div>
+                        <h3 class="mt-8 font-display text-2xl font-bold text-white">Threading experts</h3>
+                        <p class="mt-4 text-sm leading-7 text-slate-400">
+                            Detailed eyebrow, cheek, forehead, and full-face threading with clean results.
+                        </p>
+                    </article>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div id="services" class="py-24 bg-slate-950 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            
-            <div class="flex flex-col md:flex-row justify-between items-end mb-12">
-                <div>
-                    <h2 class="text-4xl font-bold mb-4 text-white tracking-wide">Select Services</h2>
-                    <p class="text-slate-400 text-lg">Walk-ins welcome. Booking online incurs a standard $10 appointment charge.</p>
+        <section id="gallery" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+                    <div>
+                        <p class="section-kicker">The lookbook</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold tracking-[-0.04em] text-white sm:text-6xl">
+                            Work worth showing.
+                        </h2>
+                    </div>
+                    <p class="max-w-md text-sm leading-7 text-slate-400">
+                        A few references from the chair. Bring your own style, or let the barber build one.
+                    </p>
                 </div>
-                <div class="mt-4 md:mt-0">
-                    <span id="shopStatus" class="inline-flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-sm text-slate-300 text-sm font-semibold transition-colors duration-300 shadow-inner">
-                        <i class="fas fa-circle text-green-500 text-[10px] mr-2"></i> Shop is Open
-                    </span>
+
+                <div class="mt-14 grid auto-rows-[180px] grid-cols-2 gap-3 sm:auto-rows-[240px] md:grid-cols-4">
+                    <div class="lookbook-tile group col-span-2 row-span-2 overflow-hidden border border-white/10">
+                        <img
+                            class="lookbook-image"
+                            src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=85&w=1000"
+                            alt="Barber working on a haircut"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="lookbook-tile group overflow-hidden border border-white/10">
+                        <img
+                            class="lookbook-image"
+                            src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=85&w=600"
+                            alt="Finished beard trim"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="lookbook-tile group overflow-hidden border border-white/10">
+                        <img
+                            class="lookbook-image"
+                            src="https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?auto=format&fit=crop&q=85&w=600"
+                            alt="Scissor haircut detail"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="lookbook-tile group col-span-2 overflow-hidden border border-white/10">
+                        <img
+                            class="lookbook-image"
+                            src="https://images.unsplash.com/photo-1534723452862-4c8765377f3f?auto=format&fit=crop&q=85&w=900"
+                            alt="Barber tools and styling equipment"
+                            loading="lazy"
+                        >
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="flex flex-col lg:flex-row gap-8 relative">
-                
-                <!-- Services Menu Grid -->
-                <div class="lg:w-2/3">
-                    
-                    <!-- Category: Men's Haircut -->
-                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">Mens Haircut</h3>
-                    </div>
-                    <div id="grid-haircuts" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Crew Cut</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Simple, clean, and classic machine cut.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Crew Cut', 15.00, 'haircut')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-                        
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Style Hair Cut</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Standard scissors/clipper cut customized to your style.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Style Hair Cut', 20.00, 'haircut')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-yellow-500 text-slate-900 text-[10px] font-bold px-2 py-1 uppercase tracking-wider">Popular</div>
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Fades</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$25.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Starts at $25. Zero, skin, or taper fades for a seamless blend.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Fades', 25.00, 'fade')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Only Scissors Cut</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$30.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Complete precision cut using scissors only.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Only Scissors Cut', 30.00, 'haircut')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
+        <section id="services" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+                    <div>
+                        <p class="section-kicker">Book your chair</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold tracking-[-0.04em] text-white sm:text-6xl">
+                            Select services.
+                        </h2>
+                        <p class="mt-5 max-w-2xl text-base leading-8 text-slate-400">
+                            Walk-ins are welcome. Online appointments include a $10 booking deposit.
+                        </p>
                     </div>
 
-                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">Beard & Grooming</h3>
+                    <div id="shop-status" class="inline-flex w-fit items-center gap-3 border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-300">
+                        <span class="status-dot"></span>
+                        <span id="shop-status-text">Checking shop status...</span>
                     </div>
-                    <div id="grid-grooming" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Beard Line Up</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$10.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Beard Line Up', 10.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-                        
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Beard Trimming</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Beard Trimming', 15.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Full Beard</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Complete sculpt and trim for a full beard.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Full Beard', 20.00, 'grooming')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Colour</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$25.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Hair or beard color application.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Colour', 25.00, 'grooming')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Scrub</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Scrub', 20.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Head Massage</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$20.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Head Massage', 20.00, 'grooming')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md sm:col-span-2 lg:col-span-1">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Facial</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$70.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Premium facial treatment for deep cleansing and relaxation.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Facial', 70.00, 'grooming')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">Women Cut & Threading</h3>
-                    </div>
-                    <div id="grid-threading" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md sm:col-span-2">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Women Cut</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">From $25.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Professional women's styling and cuts.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Women Cut', 25.00, 'womens')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Eyebrows Threading</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$10.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Eyebrows Threading', 10.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-                        
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Forehead Threading</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$10.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Forehead Threading', 10.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Cheeks Threading</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$15.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Cheeks Threading', 15.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Full Face Threading</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$30.00</span>
-                                </div>
-                            </div>
-                            <button onclick="openCustomizationModal('Full Face Threading', 30.00, 'threading')" class="mt-4 w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Select Options</button>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center mb-6 border-b border-slate-800 pb-2">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">Retail & Styling Products</h3>
-                    </div>
-                    <div id="grid-retail" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Matte Styling Clay</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$22.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Strong hold, matte finish for textured styles.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Matte Styling Clay', 22.00, 'retail')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Add to Order</button>
-                        </div>
-                        
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Premium Beard Oil</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$25.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Nourishes skin and softens beard hair.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Premium Beard Oil', 25.00, 'retail')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Add to Order</button>
-                        </div>
-
-                        <div class="bg-slate-900 p-5 border border-slate-800 flex flex-col justify-between hover:border-yellow-500/50 transition group rounded-sm shadow-md">
-                            <div>
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-white text-xl group-hover:text-yellow-500 transition tracking-wide">Texture Powder</h4>
-                                    <span class="font-bold text-yellow-500 text-lg">$18.00</span>
-                                </div>
-                                <p class="text-sm text-slate-400 mb-4 line-clamp-2">Instant volume and thickness for thin hair.</p>
-                            </div>
-                            <button onclick="openCustomizationModal('Texture Powder', 18.00, 'retail')" class="w-full bg-slate-800 border border-slate-700 hover:border-yellow-500 hover:text-yellow-500 text-slate-300 font-bold py-2.5 transition duration-200 uppercase text-xs tracking-wider rounded-sm">Add to Order</button>
-                        </div>
-                    </div>
-
                 </div>
 
-                <div class="lg:w-1/3">
-                    <div class="bg-slate-900 p-6 rounded-sm border border-slate-700 sticky top-24 shadow-2xl">
-                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-800">
-                            <h3 class="font-bold text-2xl text-white brand-font tracking-wide">Your Booking</h3>
-                            <span class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 text-xs font-bold px-3 py-1 rounded-sm"><span id="cartCount">0</span> Items</span>
-                        </div>
+                <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+                    <div id="service-groups" class="space-y-16"></div>
 
-                        <!-- Cart Items -->
-                        <div class="min-h-[150px] max-h-[400px] overflow-y-auto mb-6 pr-2 custom-scroll relative">
-                            <div id="emptyCart" class="absolute inset-0 flex flex-col items-center justify-center text-slate-500 mt-8">
-                                <i class="fas fa-cut text-4xl mb-3 opacity-30"></i>
-                                <p class="text-sm">Select services to book.</p>
-                            </div>
-                            <div id="cartItemsList" class="space-y-4 relative z-10">
-                                <!-- Items injected here by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Summary -->
-                        <div class="border-t border-slate-800 pt-4 mb-6">
-                            <!-- Appointment Fee Note -->
-                            <div class="flex justify-between text-yellow-500 mb-2 text-sm hidden" id="bookingFeeRow">
-                                <span>Appointment Charge</span>
-                                <span>$10.00</span>
-                            </div>
-                            
-                            <div class="flex justify-between font-bold text-xl text-white mt-4 border-t border-slate-800 pt-4">
-                                <span>Estimated Total</span>
-                                <span class="text-yellow-500">$<span id="cartTotal">0.00</span></span>
+                    <aside class="lg:sticky lg:top-24">
+                        <div class="glass p-6">
+                            <div class="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
+                                <div>
+                                    <p class="section-kicker">Your booking</p>
+                                    <h3 class="mt-2 font-display text-2xl font-bold text-white">Chair queue</h3>
+                                </div>
+                                <span class="border border-acid/20 bg-acid/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-acid">
+                                    <span id="cart-count">0</span> items
+                                </span>
                             </div>
 
-                            <button id="checkoutBtn" onclick="openCheckoutModal()" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm mt-6">
-                                <i class="fas fa-lock mr-2"></i> Proceed to Secure Checkout
+                            <div id="cart-items" class="custom-scroll mt-5 max-h-[430px] space-y-3 overflow-y-auto pr-1"></div>
+
+                            <div id="cart-empty" class="cart-empty mt-5 flex flex-col items-center justify-center px-5 text-center">
+                                <i class="fa-solid fa-scissors text-3xl text-slate-700"></i>
+                                <p class="mt-4 text-sm font-semibold text-slate-400">Your chair is waiting.</p>
+                                <p class="mt-2 text-xs leading-5 text-slate-600">
+                                    Select a service to start your booking.
+                                </p>
+                            </div>
+
+                            <div class="mt-6 space-y-3 border-t border-white/10 pt-5 text-sm">
+                                <div class="flex justify-between gap-4 text-slate-400">
+                                    <span>Services</span>
+                                    <span id="cart-subtotal">$0.00</span>
+                                </div>
+
+                                <div id="cart-fee-row" class="flex justify-between gap-4 text-acid">
+                                    <span>Online deposit</span>
+                                    <span>$10.00</span>
+                                </div>
+
+                                <div class="flex justify-between gap-4 border-t border-white/10 pt-4 font-display text-xl font-bold text-white">
+                                    <span>Estimated total</span>
+                                    <span id="cart-total" class="text-acid">$0.00</span>
+                                </div>
+                            </div>
+
+                            <button
+                                id="checkout-button"
+                                type="button"
+                                disabled
+                                class="mt-6 flex w-full items-center justify-center gap-3 bg-white/10 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide text-slate-500 transition disabled:cursor-not-allowed"
+                            >
+                                <i class="fa-solid fa-lock text-xs"></i>
+                                Proceed to checkout
                             </button>
 
-                            <p class="text-center text-xs text-slate-500 mt-4">
-                                <i class="fas fa-info-circle mr-1"></i> Pay in-store. Online bookings include a $10 fee.
+                            <p class="mt-4 text-center text-xs leading-5 text-slate-500">
+                                The $10 online deposit is charged at checkout. Remaining services are paid in-store.
                             </p>
                         </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <div id="itemModal" class="fixed inset-0 z-50 hidden flex items-center justify-center px-4">
-        <div class="absolute inset-0 bg-black/80 modal-overlay" onclick="closeItemModal()"></div>
-        
-        <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-md z-10 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]" id="itemModalContent">
-            
-            <!-- Modal Header -->
-            <div class="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
-                <div>
-                    <h3 class="font-bold text-2xl text-white brand-font tracking-wide" id="modalItemName">Service Name</h3>
-                    <p class="text-yellow-500 font-bold text-sm mt-1">Base: $<span id="modalItemBasePrice">0.00</span></p>
-                </div>
-                <button onclick="closeItemModal()" class="text-slate-500 hover:text-white transition">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
+        <section id="location" class="border-t border-white/10 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+                <div class="grid overflow-hidden border border-white/10 bg-panel md:grid-cols-2">
+                    <div class="p-8 sm:p-12 lg:p-16">
+                        <p class="section-kicker">Find the shop</p>
+                        <h2 class="mt-5 font-display text-4xl font-bold tracking-[-0.04em] text-white sm:text-6xl">
+                            Come through.
+                        </h2>
 
-            <!-- Dynamic Body Options -->
-            <div class="p-6 overflow-y-auto custom-scroll flex-grow" id="modalItemOptions">
-                <!-- Injected via JS based on item type -->
-            </div>
+                        <div class="mt-12 space-y-8">
+                            <div class="flex gap-4">
+                                <div class="service-icon shrink-0">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-display text-lg font-bold text-white">Location</h3>
+                                    <p class="mt-2 text-sm leading-7 text-slate-400">
+                                        Harris Park, NSW<br>
+                                        Serving the local community.
+                                    </p>
+                                </div>
+                            </div>
 
-            <!-- Add to Cart Footer -->
-            <div class="p-6 bg-slate-950 border-t border-slate-800">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-slate-400 text-sm font-bold uppercase tracking-wider">Service Total:</span>
-                    <span class="text-2xl font-bold text-yellow-500">$<span id="modalItemTotalPrice">0.00</span></span>
-                </div>
-                <button onclick="confirmItemAdd()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-3 px-4 rounded-sm transition uppercase tracking-wide flex justify-center items-center shadow-lg shadow-yellow-500/20">
-                    Add to Booking
-                </button>
-            </div>
-        </div>
-    </div>
+                            <div class="flex gap-4">
+                                <div class="service-icon shrink-0">
+                                    <i class="fa-solid fa-clock"></i>
+                                </div>
+                                <div class="w-full">
+                                    <h3 class="font-display text-lg font-bold text-white">Opening hours</h3>
+                                    <div class="mt-3 flex justify-between border-b border-white/10 pb-3 text-sm text-slate-400">
+                                        <span class="font-semibold text-slate-300">Monday - Sunday</span>
+                                        <span>9:30am - 8:00pm</span>
+                                    </div>
+                                    <p class="mt-3 text-xs font-semibold uppercase tracking-wider text-acid">
+                                        Open 7 days a week
+                                    </p>
+                                </div>
+                            </div>
 
-    <div id="checkoutModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
-        <div class="absolute inset-0 bg-black/90 modal-overlay" onclick="closeModal()"></div>
-        
-        <div class="bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-2xl z-20 overflow-hidden transform scale-95 transition-transform duration-300 max-h-[95vh] flex flex-col" id="modalContent">
-            
-            <div class="bg-slate-950 px-6 py-4 border-b border-slate-800 flex justify-between items-center flex-shrink-0">
-                <h3 class="font-bold text-xl text-white brand-font tracking-wide">Finalize Appointment & Deposit</h3>
-                <button onclick="closeModal()" class="text-slate-500 hover:text-white transition">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-
-            <div class="p-6 overflow-y-auto custom-scroll" id="modalBody">
-                <div class="flex justify-between text-lg mb-6 pb-4 border-b border-slate-800">
-                    <span class="text-slate-400">Total (incl. products & $10 fee):</span>
-                    <span class="font-bold text-yellow-500">$<span id="modalCheckoutTotal">0.00</span></span>
-                </div>
-
-                <div class="space-y-6">
-                    <!-- Date & Time -->
-                    <div>
-                        <label class="block text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">1. Select Date & Time</label>
-                        <input type="date" class="w-full bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-3 mb-3 focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition [color-scheme:dark]">
-                        
-                   <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="0930" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">9:30 AM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1000" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">10:00 AM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1030" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">10:30 AM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1100" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">11:00 AM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1130" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">11:30 AM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1200" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">12:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1230" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">12:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1300" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">1:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1330" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">1:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1400" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">2:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1430" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">2:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1500" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">3:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1530" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">3:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1600" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">4:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1630" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">4:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1700" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">5:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1730" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">5:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1800" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">6:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1830" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">6:30 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1900" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">7:00 PM</div>
-    </label>
-    <label class="cursor-pointer">
-        <input type="radio" name="time" value="1930" class="peer sr-only">
-        <div class="py-2 bg-slate-800 border border-slate-700 rounded-sm text-xs font-bold text-white text-center peer-checked:bg-yellow-500 peer-checked:text-slate-900 peer-checked:border-yellow-500 hover:border-slate-500 transition">7:30 PM</div>
-    </label>
-</div>
-
-                    <!-- Details -->
-                    <div>
-                        <label class="block text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider">2. Your Details</label>
-                        <div class="space-y-3">
-                            <input type="text" id="custName" placeholder="Full Name" class="w-full bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-3 focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition placeholder-slate-500">
-                            <input type="tel" id="custPhone" placeholder="Phone Number (For SMS)" class="w-full bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-3 focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 outline-none transition placeholder-slate-500">
-                        </div>
-                    </div>
-
-                    <!-- STRIPE REAL PAYMENT UI -->
-                    <div class="bg-slate-950 p-5 border border-slate-800 rounded-sm">
-                        <label class="block text-sm font-bold text-slate-300 mb-1 uppercase tracking-wider">3. Secure $10 Deposit</label>
-                        <p class="text-xs text-slate-500 mb-4">Required to secure your spot. Deducted from your final total in-store.</p>
-                        
-                        <div class="flex flex-col space-y-4">
-                            <!-- Stripe Elements will inject the secure credit card field here -->
-                            <div id="stripe-ui-container">
-                                <div id="card-element" class="bg-slate-900 border border-slate-700 rounded-sm p-3 w-full focus-within:border-yellow-500 transition"></div>
-                                <div id="card-errors" role="alert" class="text-red-500 text-xs mt-2 font-bold hidden"></div>
+                            <div class="flex gap-4">
+                                <div class="service-icon shrink-0">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-display text-lg font-bold text-white">Contact</h3>
+                                    <a href="tel:0296357773" class="mt-2 block text-sm text-slate-400 transition hover:text-acid">
+                                        02 9635 7773
+                                    </a>
+                                    <a href="tel:0403527000" class="mt-1 block text-sm text-slate-400 transition hover:text-acid">
+                                        0403 527 000
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="p-6 border-t border-slate-800 bg-slate-950 flex-shrink-0 mt-6">
-                    <!-- ID added to button for Stripe hooking -->
-                    <button id="stripe-submit-btn" onclick="processStripePayment()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font text-xl py-4 px-4 rounded-sm transition flex items-center justify-center tracking-wide shadow-lg shadow-yellow-500/20">
-                        <i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book
-                    </button>
+                    <div class="min-h-[380px] bg-panel2">
+                        <iframe
+                            title="Map showing Harris Park, NSW"
+                            src="https://maps.google.com/maps?q=Harris%20Park,%20NSW&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                            class="h-full min-h-[380px] w-full border-0 grayscale contrast-125"
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
                 </div>
             </div>
-            
-            <div class="p-10 text-center hidden bg-slate-900 border border-slate-700 rounded-sm shadow-2xl w-full max-w-md z-10 mx-auto my-auto" id="modalSuccess">
-                <div class="w-20 h-20 bg-green-900/30 border border-green-500/50 rounded-full flex items-center justify-center mx-auto mb-6 text-green-500 text-4xl">
-                    <i class="fas fa-check"></i>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/10 py-12">
+        <div class="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
+            <div class="font-display text-lg font-bold">
+                <span class="text-acid">DESI BOYS</span>
+                <span class="text-white"> BARBER</span>
+            </div>
+            <p class="text-sm text-slate-500">
+                &copy; <span id="copyright-year"></span> Desi Boys Barber. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <div id="item-modal" class="modal" hidden>
+        <div class="modal-backdrop" data-close-modal="item-modal"></div>
+
+        <section
+            class="dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="item-modal-title"
+        >
+            <div class="dialog-header flex items-start justify-between gap-5 border-b px-6 py-5">
+                <div>
+                    <p class="section-kicker">Customize service</p>
+                    <h2 id="item-modal-title" class="mt-2 font-display text-2xl font-bold text-white">
+                        Service
+                    </h2>
+                    <p class="mt-1 text-sm font-semibold text-acid">
+                        Base price: <span id="item-modal-base-price">$0.00</span>
+                    </p>
                 </div>
-                <h3 class="text-3xl font-bold text-white mb-2 brand-font tracking-wide">Booking Confirmed!</h3>
-                <p class="text-slate-400 mb-6 text-sm">Your $10 deposit was successful via Stripe. You will receive an SMS confirmation shortly.</p>
-                <button onclick="resetAndClose()" class="w-full bg-slate-800 border border-slate-700 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-sm transition uppercase tracking-wider text-sm">
+
+                <button
+                    type="button"
+                    class="grid h-10 w-10 shrink-0 place-items-center border border-white/10 text-slate-400 transition hover:border-acid/50 hover:text-white"
+                    data-close-modal="item-modal"
+                    aria-label="Close service customization"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="item-modal-options" class="dialog-body space-y-7 p-6"></div>
+
+            <div class="dialog-footer border-t p-6">
+                <div class="mb-4 flex items-center justify-between gap-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Service total</span>
+                    <span id="item-modal-total-price" class="font-display text-2xl font-bold text-acid">$0.00</span>
+                </div>
+
+                <button
+                    id="add-to-booking-button"
+                    type="button"
+                    class="acid-button flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide"
+                >
+                    Add to booking
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <div id="checkout-modal" class="modal" hidden>
+        <div class="modal-backdrop" data-close-modal="checkout-modal"></div>
+
+        <section
+            class="dialog max-w-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="checkout-modal-title"
+        >
+            <div class="dialog-header flex items-start justify-between gap-5 border-b px-6 py-5">
+                <div>
+                    <p class="section-kicker">Secure checkout</p>
+                    <h2 id="checkout-modal-title" class="mt-2 font-display text-2xl font-bold text-white">
+                        Finalize appointment
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    class="grid h-10 w-10 shrink-0 place-items-center border border-white/10 text-slate-400 transition hover:border-acid/50 hover:text-white"
+                    data-close-modal="checkout-modal"
+                    aria-label="Close checkout"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="checkout-form" novalidate>
+                <div class="dialog-body space-y-8 p-6">
+                    <div class="grid gap-3 sm:grid-cols-4">
+                        <div class="border border-white/10 bg-white/[0.03] p-4 sm:col-span-2">
+                            <p class="text-xs uppercase tracking-wider text-slate-500">Services</p>
+                            <p id="checkout-services-total" class="mt-2 font-display text-xl font-bold text-white">$0.00</p>
+                        </div>
+
+                        <div class="border border-white/10 bg-white/[0.03]">
+                            <div class="p-4">
+                                <p class="text-xs uppercase tracking-wider text-slate-500">Deposit today</p>
+                                <p id="checkout-deposit" class="mt-2 font-display text-xl font-bold text-acid">$10.00</p>
+                            </div>
+                        </div>
+
+                        <div class="border border-acid/20 bg-acid/5">
+                            <div class="p-4">
+                                <p class="text-xs uppercase tracking-wider text-acid/70">Estimated total</p>
+                                <p id="checkout-total" class="mt-2 font-display text-xl font-bold text-acid">$0.00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-4 flex items-center justify-between gap-4">
+                            <label for="booking-date" class="text-sm font-bold uppercase tracking-wider text-slate-300">
+                                1. Date and time
+                            </label>
+                            <span class="text-xs text-slate-500">Sydney local time</span>
+                        </div>
+
+                        <input
+                            id="booking-date"
+                            type="date"
+                            class="service-input px-4 py-3 [color-scheme:dark]"
+                            required
+                        >
+
+                        <div id="time-slots" class="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4"></div>
+                        <p id="time-error" class="mt-2 hidden text-xs font-semibold text-red-400"></p>
+                    </div>
+
+                    <div>
+                        <label class="mb-4 block text-sm font-bold uppercase tracking-wider text-slate-300">
+                            2. Your details
+                        </label>
+
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <label for="customer-name" class="sr-only">Full name</label>
+                                <input
+                                    id="customer-name"
+                                    type="text"
+                                    autocomplete="name"
+                                    placeholder="Full name"
+                                    class="service-input px-4 py-3"
+                                    required
+                                >
+                            </div>
+
+                            <div>
+                                <label for="customer-phone" class="sr-only">Phone number</label>
+                                <input
+                                    id="customer-phone"
+                                    type="tel"
+                                    autocomplete="tel"
+                                    placeholder="Phone number"
+                                    class="service-input px-4 py-3"
+                                    required
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-bold uppercase tracking-wider text-slate-300">
+                                3. Secure $10 deposit
+                            </label>
+                            <p class="mt-2 text-xs leading-5 text-slate-500">
+                                Your deposit secures the appointment and is applied toward your final in-store balance.
+                            </p>
+                        </div>
+
+                        <div id="card-element" class="stripe-card"></div>
+                        <p id="card-errors" class="mt-2 hidden text-xs font-semibold text-red-400" role="alert"></p>
+                    </div>
+
+                    <div id="checkout-error" class="hidden border border-red-400/30 bg-red-400/10 p-4 text-sm leading-6 text-red-200" role="alert"></div>
+                </div>
+
+                <div class="dialog-footer border-t p-6">
+                    <button
+                        id="pay-button"
+                        type="submit"
+                        class="acid-button flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide"
+                    >
+                        <i class="fa-solid fa-lock text-xs"></i>
+                        Pay $10 deposit and book
+                    </button>
+
+                    <p class="mt-4 text-center text-xs leading-5 text-slate-500">
+                        Payments are processed securely by Stripe.
+                    </p>
+                </div>
+            </form>
+
+            <div id="checkout-success" hidden class="dialog-body p-8 text-center sm:p-12">
+                <div class="mx-auto grid h-20 w-20 place-items-center rounded-full border border-green-400/30 bg-green-400/10 text-3xl text-green-300">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+
+                <p class="section-kicker mt-8">Booking confirmed</p>
+                <h2 class="mt-3 font-display text-3xl font-bold text-white">Your chair is reserved.</h2>
+                <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-slate-400">
+                    Your deposit was processed successfully. We have saved your appointment details.
+                </p>
+
+                <div class="mx-auto mt-8 max-w-md border border-white/10 bg-white/[0.03] p-5 text-left">
+                    <div class="flex justify-between gap-4 text-sm">
+                        <span class="text-slate-500">Appointment</span>
+                        <span id="success-appointment" class="font-semibold text-white"></span>
+                    </div>
+                    <div class="mt-3 flex justify-between gap-4 text-sm">
+                        <span class="text-slate-500">Confirmation</span>
+                        <span id="success-reference" class="font-semibold text-acid"></span>
+                    </div>
+                </div>
+
+                <button
+                    id="success-close-button"
+                    type="button"
+                    class="ghost-button mt-8 w-full px-5 py-4 font-display text-sm font-bold uppercase tracking-wide"
+                >
                     Close
                 </button>
             </div>
-        </div>
+        </section>
     </div>
 
-    <div id="location" class="py-20 bg-slate-900 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-slate-950 border border-slate-800 rounded-sm overflow-hidden shadow-2xl flex flex-col md:flex-row">
-                <div class="p-10 md:p-16 md:w-1/2 flex flex-col justify-center">
-                    <h2 class="text-4xl font-bold mb-8 text-white brand-font tracking-wide">Find The Shop</h2>
-                    
-                    <div class="space-y-6">
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 rounded-sm bg-slate-900 border border-slate-800 flex items-center justify-center mr-4 flex-shrink-0 text-yellow-500 text-xl shadow-inner">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg mb-1 text-white uppercase tracking-wider">Location</h4>
-                                <p class="text-slate-400 text-sm">Harris Park, NSW<br>Serving the local community</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 rounded-sm bg-slate-900 border border-slate-800 flex items-center justify-center mr-4 flex-shrink-0 text-yellow-500 text-xl shadow-inner">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <div class="w-full">
-                                <h4 class="font-bold text-lg mb-2 text-white uppercase tracking-wider">Opening Hours</h4>
-                                <div class="flex justify-between text-slate-400 text-sm border-b border-slate-800 pb-2 mb-2"><span class="w-24 font-bold text-slate-300">Mon - Sun:</span> <span>9:30am to 8:00pm</span></div>
-                                <p class="text-xs text-yellow-500 mt-2 italic">* Open 7 Days a Week</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start">
-                            <div class="w-12 h-12 rounded-sm bg-slate-900 border border-slate-800 flex items-center justify-center mr-4 flex-shrink-0 text-yellow-500 text-xl shadow-inner">
-                                <i class="fas fa-phone"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-lg mb-1 text-white uppercase tracking-wider">Contact</h4>
-                                <a href="tel:0296357773" class="block text-slate-400 hover:text-yellow-500 transition text-sm mb-1">02 9635 7773</a>
-                                <a href="tel:0403527000" class="block text-slate-400 hover:text-yellow-500 transition text-sm">0403 527 000</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="md:w-1/2 bg-slate-800 min-h-[350px] relative h-full">
-                    <!-- Real Interactive Google Map centered on Harris Park NSW -->
-                    <iframe 
-                        src="https://maps.google.com/maps?q=Harris%20Park,%20NSW&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-                        class="absolute inset-0 w-full h-full" 
-                        style="border:0; min-height: 100%;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer class="bg-slate-950 border-t border-slate-900 py-12 text-center">
-        <div class="mb-4">
-             <span class="brand-font font-bold text-3xl text-white flex items-center justify-center gap-2">
-                <span class="text-yellow-500">DESI BOYS</span> BARBER
-            </span>
-        </div>
-        <p class="text-slate-500 text-sm">&copy; 2026 Desi Boys Barber (Barber Lane). All Rights Reserved.</p>
-    </footer>
-
-    <div id="chatbot-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-        <div id="chat-window" class="bg-slate-900 w-80 sm:w-96 rounded-sm shadow-2xl shadow-black border border-slate-700 overflow-hidden mb-4 hidden transform transition-all origin-bottom-right scale-95 opacity-0 duration-300">
-            <!-- Header -->
-            <div class="bg-slate-950 px-5 py-4 flex justify-between items-center text-white border-b border-slate-800">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-slate-900 text-lg shadow-inner">
-                        <i class="fas fa-robot"></i>
+    <div id="chatbot" class="fixed bottom-5 right-5 z-40">
+        <div
+            id="chat-panel"
+            hidden
+            class="chat-panel mb-4 w-[min(380px,calc(100vw-2.5rem))] overflow-hidden border border-white/10 bg-panel shadow-2xl shadow-black/40"
+        >
+            <div class="flex items-center justify-between border-b border-white/10 bg-ink/70 px-5 py-4">
+                <div class="flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-full bg-acid text-ink">
+                        <i class="fa-solid fa-scissors"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold brand-font tracking-widest text-lg">Shop Assistant</h4>
-                        <p class="text-[10px] text-slate-400 flex items-center uppercase"><span class="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></span> Ready</p>
+                        <h2 class="font-display text-lg font-bold text-white">Shop assistant</h2>
+                        <p class="mt-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                            <span class="h-2 w-2 rounded-full bg-green-400"></span>
+                            Ready
+                        </p>
                     </div>
                 </div>
-                <button onclick="toggleChat()" class="text-slate-500 hover:text-white transition">
-                    <i class="fas fa-times"></i>
+
+                <button
+                    id="chat-close-button"
+                    type="button"
+                    class="grid h-9 w-9 place-items-center text-slate-500 transition hover:text-white"
+                    aria-label="Close shop assistant"
+                >
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            
-            <!-- Messages Area -->
-            <div id="chat-messages" class="h-80 p-4 overflow-y-auto bg-slate-900 space-y-4 text-sm flex flex-col custom-scroll">
-                <div class="flex items-start max-w-[85%]">
-                    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-yellow-500 mr-2 flex-shrink-0">
-                        <i class="fas fa-cut text-xs"></i>
-                    </div>
-                    <div class="bg-slate-800 p-3 rounded-sm rounded-tl-none border border-slate-700 shadow-sm text-slate-300">
-                        Welcome to Desi Boys Barber in Harris Park. I can help with <strong>prices</strong>, <strong>opening hours</strong>, or <strong>booking</strong>!
-                    </div>
-                </div>
+
+            <div id="chat-messages" class="custom-scroll flex h-80 flex-col gap-4 overflow-y-auto p-4"></div>
+
+            <div id="chat-typing" hidden class="border-t border-white/10 px-4 py-3 text-xs text-acid">
+                Typing...
             </div>
 
-            <div id="chat-typing" class="px-4 py-2 bg-slate-900 hidden">
-                <div class="flex items-center space-x-1 text-yellow-500">
-                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce"></div>
-                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-                </div>
-            </div>
-
-            <div class="p-3 bg-slate-950 border-t border-slate-800 flex items-center space-x-2">
-                <input type="text" id="chat-input" placeholder="Ask a question..." class="flex-grow bg-slate-800 border border-slate-700 text-white rounded-sm px-4 py-2 focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 text-sm placeholder-slate-500" onkeypress="handleChatEnter(event)">
-                <button onclick="sendMessage()" class="w-10 h-10 bg-yellow-500 rounded-sm text-slate-900 flex items-center justify-center hover:bg-yellow-400 transition shadow-md flex-shrink-0">
-                    <i class="fas fa-paper-plane text-sm -ml-0.5"></i>
+            <div class="flex gap-2 border-t border-white/10 bg-ink/60 p-3">
+                <label for="chat-input" class="sr-only">Ask the shop assistant</label>
+                <input
+                    id="chat-input"
+                    type="text"
+                    class="service-input min-w-0 px-3 py-2 text-sm"
+                    placeholder="Ask about prices or hours..."
+                    autocomplete="off"
+                >
+                <button
+                    id="chat-send-button"
+                    type="button"
+                    class="acid-button grid h-11 w-11 shrink-0 place-items-center"
+                    aria-label="Send message"
+                >
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
                 </button>
             </div>
         </div>
 
-        <button id="chat-toggle-btn" onclick="toggleChat()" class="w-14 h-14 bg-yellow-500 rounded-full shadow-2xl shadow-black flex items-center justify-center text-slate-900 text-2xl hover:bg-yellow-400 hover:scale-110 transition duration-300 relative">
-            <i class="fas fa-comment-dots"></i>
-            <span class="absolute top-0 right-0 w-4 h-4 bg-red-600 border-2 border-slate-900 rounded-full animate-ping"></span>
-            <span class="absolute top-0 right-0 w-4 h-4 bg-red-600 border-2 border-slate-900 rounded-full"></span>
+        <button
+            id="chat-toggle-button"
+            type="button"
+            class="acid-button grid h-14 w-14 place-items-center rounded-full text-xl"
+            aria-expanded="false"
+            aria-controls="chat-panel"
+            aria-label="Open shop assistant"
+        >
+            <i class="fa-solid fa-comment-dots"></i>
         </button>
     </div>
 
     <script>
-        // --- STRIPE INTEGRATION LOGIC ---
-        
-        const stripe = Stripe('pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2');
-        let cardElement; 
-        let stripeElementsMounted = false;
+        (() => {
+            "use strict";
 
-        function initializeStripeUI() {
-            if (stripeElementsMounted) return;
+            /*
+             * Payment configuration.
+             *
+             * The frontend expects the backend endpoint to:
+             * 1. Validate the booking payload.
+             * 2. Create a Stripe PaymentIntent for 1000 cents.
+             * 3. Return JSON in the form: { "clientSecret": "..." }.
+             *
+             * Do not put a Stripe secret key in this file.
+             */
+            const CONFIG = {
+                stripePublishableKey: "pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2",
+                paymentIntentEndpoint: "/api/create-payment-intent",
+                currency: "aud"
+            };
 
-            const elements = stripe.elements();
-            const style = {
-                base: {
-                    color: '#ffffff',
-                    fontFamily: '"Inter", sans-serif',
-                    fontSmoothing: 'antialiased',
-                    fontSize: '14px',
-                    '::placeholder': {
-                        color: '#475569'
-                    },
-                    iconColor: '#eab308'
+            const BOOKING_DEPOSIT = 10;
+            const BOOKING_DEPOSIT_CENTS = BOOKING_DEPOSIT * 100;
+            const SHOP_TIME_ZONE = "Australia/Sydney";
+
+            const SERVICES = [
+                {
+                    id: "crew-cut",
+                    category: "Men's Haircuts",
+                    name: "Crew Cut",
+                    price: 15,
+                    type: "haircut",
+                    icon: "fa-scissors",
+                    description: "Simple, clean, and classic machine cut."
                 },
-                invalid: {
-                    color: '#ef4444',
-                    iconColor: '#ef4444'
+                {
+                    id: "style-hair-cut",
+                    category: "Men's Haircuts",
+                    name: "Style Hair Cut",
+                    price: 20,
+                    type: "haircut",
+                    icon: "fa-wand-magic-sparkles",
+                    description: "A standard scissor and clipper cut shaped around your style."
+                },
+                {
+                    id: "fades",
+                    category: "Men's Haircuts",
+                    name: "Fades",
+                    price: 25,
+                    type: "fade",
+                    icon: "fa-bolt",
+                    badge: "Popular",
+                    description: "Zero, taper, or skin fades with a seamless blend."
+                },
+                {
+                    id: "scissors-cut",
+                    category: "Men's Haircuts",
+                    name: "Only Scissors Cut",
+                    price: 30,
+                    type: "haircut",
+                    icon: "fa-scissors",
+                    description: "Complete precision cut using scissors only."
+                },
+                {
+                    id: "beard-line-up",
+                    category: "Beard & Grooming",
+                    name: "Beard Line Up",
+                    price: 10,
+                    type: "grooming",
+                    icon: "fa-pen-nib",
+                    description: "A sharp outline and clean finish."
+                },
+                {
+                    id: "beard-trimming",
+                    category: "Beard & Grooming",
+                    name: "Beard Trimming",
+                    price: 15,
+                    type: "grooming",
+                    icon: "fa-user-tie",
+                    description: "Shape, trim, and refine your beard."
+                },
+                {
+                    id: "full-beard",
+                    category: "Beard & Grooming",
+                    name: "Full Beard",
+                    price: 20,
+                    type: "grooming",
+                    icon: "fa-face-smile",
+                    description: "Complete sculpt and trim for a full beard."
+                },
+                {
+                    id: "colour",
+                    category: "Beard & Grooming",
+                    name: "Colour",
+                    price: 25,
+                    type: "grooming",
+                    icon: "fa-palette",
+                    description: "Hair or beard colour application."
+                },
+                {
+                    id: "scrub",
+                    category: "Beard & Grooming",
+                    name: "Scrub",
+                    price: 20,
+                    type: "grooming",
+                    icon: "fa-droplet",
+                    description: "A refreshing exfoliating treatment."
+                },
+                {
+                    id: "head-massage",
+                    category: "Beard & Grooming",
+                    name: "Head Massage",
+                    price: 20,
+                    type: "grooming",
+                    icon: "fa-spa",
+                    description: "A relaxing head and scalp massage."
+                },
+                {
+                    id: "facial",
+                    category: "Beard & Grooming",
+                    name: "Facial",
+                    price: 70,
+                    type: "grooming",
+                    icon: "fa-sparkles",
+                    description: "Premium facial treatment for deep cleansing and relaxation."
+                },
+                {
+                    id: "women-cut",
+                    category: "Women Cut & Threading",
+                    name: "Women Cut",
+                    price: 25,
+                    type: "womens",
+                    icon: "fa-scissors",
+                    displayPrice: "From $25.00",
+                    description: "Professional women's styling and cuts."
+                },
+                {
+                    id: "eyebrows-threading",
+                    category: "Women Cut & Threading",
+                    name: "Eyebrows Threading",
+                    price: 10,
+                    type: "threading",
+                    icon: "fa-eye",
+                    description: "Precise eyebrow threading."
+                },
+                {
+                    id: "forehead-threading",
+                    category: "Women Cut & Threading",
+                    name: "Forehead Threading",
+                    price: 10,
+                    type: "threading",
+                    icon: "fa-face-smile",
+                    description: "Clean and detailed forehead threading."
+                },
+                {
+                    id: "cheeks-threading",
+                    category: "Women Cut & Threading",
+                    name: "Cheeks Threading",
+                    price: 15,
+                    type: "threading",
+                    icon: "fa-feather",
+                    description: "Precise cheek threading for a clean finish."
+                },
+                {
+                    id: "full-face-threading",
+                    category: "Women Cut & Threading",
+                    name: "Full Face Threading",
+                    price: 30,
+                    type: "threading",
+                    icon: "fa-star",
+                    description: "Full-face threading service."
+                },
+                {
+                    id: "matte-clay",
+                    category: "Retail & Styling Products",
+                    name: "Matte Styling Clay",
+                    price: 22,
+                    type: "retail",
+                    icon: "fa-cube",
+                    description: "Strong hold, matte finish for textured styles."
+                },
+                {
+                    id: "beard-oil",
+                    category: "Retail & Styling Products",
+                    name: "Premium Beard Oil",
+                    price: 25,
+                    type: "retail",
+                    icon: "fa-bottle-droplet",
+                    description: "Nourishes skin and softens beard hair."
+                },
+                {
+                    id: "texture-powder",
+                    category: "Retail & Styling Products",
+                    name: "Texture Powder",
+                    price: 18,
+                    type: "retail",
+                    icon: "fa-wand-magic",
+                    description: "Instant volume and thickness for thin hair."
                 }
+            ];
+
+            const CATEGORY_DESCRIPTIONS = {
+                "Men's Haircuts": "Cuts shaped around your head, style, and finish.",
+                "Beard & Grooming": "Sharp detailing and slower grooming rituals.",
+                "Women Cut & Threading": "Styling and threading with clean precision.",
+                "Retail & Styling Products": "Take the finish home with you."
             };
 
-            cardElement = elements.create('card', {
-                style: style,
-                hidePostalCode: true
-            });
-            cardElement.mount('#card-element');
+            const TIME_SLOTS = [
+                "09:30",
+                "10:00",
+                "10:30",
+                "11:00",
+                "11:30",
+                "12:00",
+                "12:30",
+                "13:00",
+                "13:30",
+                "14:00",
+                "14:30",
+                "15:00",
+                "15:30",
+                "16:00",
+                "16:30",
+                "17:00",
+                "17:30",
+                "18:00",
+                "18:30",
+                "19:00",
+                "19:30"
+            ];
 
-            cardElement.on('change', function(event) {
-                const displayError = document.getElementById('card-errors');
-                if (event.error) {
-                    displayError.textContent = event.error.message;
-                    displayError.classList.remove('hidden');
-                } else {
-                    displayError.textContent = '';
-                    displayError.classList.add('hidden');
-                }
-            });
-
-            stripeElementsMounted = true;
-        }
-
-        function processStripePayment() {
-            const btn = document.getElementById('stripe-submit-btn');
-            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Verifying Card...';
-            btn.disabled = true;
-
-            stripe.createToken(cardElement).then(function(result) {
-                if (result.error) {
-                    const errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                    errorElement.classList.remove('hidden');
-                    
-                    btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
-                    btn.disabled = false;
-                } else {
-                    const custName = document.getElementById('custName').value;
-                    const custPhone = document.getElementById('custPhone').value;
-                    const selectedTimeInput = document.querySelector('input[name="time"]:checked');
-                    const timeString = selectedTimeInput ? selectedTimeInput.nextElementSibling.innerText : 'No time selected';
-                    const cartSummary = cart.map(item => item.name).join(', ');
-                    
-                    fetch('https://stripe-backend-sandy-eight.vercel.app/api/charge', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            token: result.token.id,
-                            bookingDetails: {
-                                name: custName,
-                                phone: custPhone,
-                                time: timeString,
-                                services: cartSummary
-                            }
-                        })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Server returned status: " + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if(data.success) {
-                            showSuccessScreen();
-                        } else {
-                            throw new Error(data.error || "Payment failed on the server.");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Fetch Error:", error);
-                        const errorElement = document.getElementById('card-errors');
-                        errorElement.textContent = "Network Error: " + error.message;
-                        errorElement.classList.remove('hidden');
-                        btn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
-                        btn.disabled = false;
-                    });
-                }
-            });
-        }
-
-        function showSuccessScreen() {
-            document.getElementById('modalBody').classList.add('hidden');
-            const successEl = document.getElementById('modalSuccess');
-            successEl.classList.remove('hidden');
-            successEl.classList.add('flex', 'flex-col', 'scale-95');
-            
-            setTimeout(() => {
-                successEl.classList.remove('scale-95');
-                successEl.classList.add('scale-100');
-            }, 50);
-        }
-
-        // --- GLOBAL STATE ---
-        let cart = [];
-        let baseTotal = 0;
-        const APPOINTMENT_FEE = 10.00;
-        
-        let currentItem = {
-            name: '',
-            basePrice: 0,
-            currentPrice: 0,
-            type: '',
-            options: [] 
-        };
-
-        const formatMoney = (amount) => amount.toFixed(2);
-
-        // --- CART LOGIC ---
-        function addToCart(itemName, price, optionsList = []) {
-            cart.push({ 
-                name: itemName, 
-                price: price,
-                options: optionsList
-            });
-            baseTotal += price;
-            
-            const cartCountEl = document.getElementById('cartCount');
-            cartCountEl.classList.add('pop-anim');
-            setTimeout(() => cartCountEl.classList.remove('pop-anim'), 300);
-            
-            renderCart();
-        }
-
-        function removeFromCart(index) {
-            baseTotal -= cart[index].price;
-            cart.splice(index, 1);
-            renderCart();
-        }
-
-        function renderCart() {
-            const listEl = document.getElementById('cartItemsList');
-            const emptyEl = document.getElementById('emptyCart');
-            const checkoutBtn = document.getElementById('checkoutBtn');
-            const feeRow = document.getElementById('bookingFeeRow');
-            
-            let finalTotal = baseTotal;
-            if (cart.length > 0) {
-                finalTotal += APPOINTMENT_FEE;
-                feeRow.classList.remove('hidden');
-                emptyEl.classList.add('hidden');
-            } else {
-                feeRow.classList.add('hidden');
-                emptyEl.classList.remove('hidden');
-            }
-
-            document.getElementById('cartCount').innerText = cart.length;
-            document.getElementById('cartTotal').innerText = formatMoney(finalTotal);
-            document.getElementById('modalCheckoutTotal').innerText = formatMoney(finalTotal);
-
-            listEl.innerHTML = '';
-
-            if (cart.length === 0) {
-                checkoutBtn.disabled = true;
-                checkoutBtn.className = "w-full bg-slate-800 text-slate-500 font-bold py-4 px-4 transition duration-200 flex items-center justify-center cursor-not-allowed uppercase tracking-wider text-sm border border-slate-700 rounded-sm mt-6";
-                return;
-            }
-
-            cart.forEach((item, index) => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'flex justify-between items-start bg-slate-800 p-3 rounded-sm border border-slate-700 shadow-sm'; 
-                
-                let optionsHtml = '';
-                if (item.options && item.options.length > 0) {
-                    optionsHtml = `<ul class="text-xs text-slate-400 mt-1.5 space-y-1">`;
-                    item.options.forEach(opt => {
-                        optionsHtml += `<li><i class="fas fa-caret-right text-yellow-500 mr-1"></i> ${opt}</li>`;
-                    });
-                    optionsHtml += `</ul>`;
-                }
-
-                itemDiv.innerHTML = `
-                    <div class="flex flex-col flex-grow pr-2">
-                        <div class="flex justify-between items-center w-full">
-                            <span class="font-bold text-sm text-white">${item.name}</span>
-                            <span class="text-xs font-bold text-yellow-500">$${formatMoney(item.price)}</span>
-                        </div>
-                        ${optionsHtml}
-                    </div>
-                    <button onclick="removeFromCart(${index})" class="text-slate-500 hover:text-red-500 transition p-1 mt-[-2px]">
-                        <i class="fas fa-times text-sm"></i>
-                    </button>
-                `;
-                listEl.appendChild(itemDiv);
-            });
-
-            checkoutBtn.disabled = false;
-            checkoutBtn.className = "w-full bg-yellow-500 hover:bg-yellow-400 text-slate-900 brand-font font-bold text-xl py-4 px-4 rounded-sm transition shadow-lg shadow-yellow-500/20 flex items-center justify-center tracking-wide mt-6";
-        }
-
-        // --- CUSTOMIZATION MODAL LOGIC ---
-        function openCustomizationModal(name, basePrice, type) {
-            currentItem = {
-                name: name,
-                basePrice: basePrice,
-                currentPrice: basePrice,
-                type: type,
-                options: []
+            const state = {
+                cart: [],
+                currentItem: null,
+                stripe: null,
+                stripeCard: null,
+                stripeCardComplete: false,
+                isProcessingPayment: false,
+                completedBooking: null
             };
 
-            document.getElementById('modalItemName').innerText = name;
-            document.getElementById('modalItemBasePrice').innerText = formatMoney(basePrice);
-            document.getElementById('modalItemTotalPrice').innerText = formatMoney(basePrice);
+            const $ = (selector, root = document) => root.querySelector(selector);
+            const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-            const optionsContainer = document.getElementById('modalItemOptions');
-            let html = '';
+            const elements = {
+                serviceGroups: $("#service-groups"),
+                cartItems: $("#cart-items"),
+                cartEmpty: $("#cart-empty"),
+                cartCount: $("#cart-count"),
+                cartSubtotal: $("#cart-subtotal"),
+                cartFeeRow: $("#cart-fee-row"),
+                cartTotal: $("#cart-total"),
+                checkoutButton: $("#checkout-button"),
 
-            if (type === 'fade') {
-                html += `
-                    <div class="mb-6">
-                        <h4 class="font-bold text-slate-300 mb-3 text-sm uppercase tracking-wider">Fade Type</h4>
-                        <div class="space-y-2">
-                            <label class="flex items-center p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
-                                <input type="radio" name="fadeType" value="0" data-name="Standard Fade" checked class="h-4 w-4 custom-rdo" onchange="updateModalPrice()">
-                                <span class="ml-3 text-slate-300 text-sm">Standard Fade (Included)</span>
-                            </label>
-                            <label class="flex items-center justify-between p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
-                                <div class="flex items-center">
-                                    <input type="radio" name="fadeType" value="10.00" data-name="Skin Fade" class="h-4 w-4 custom-rdo" onchange="updateModalPrice()">
-                                    <span class="ml-3 text-slate-300 text-sm">Skin Fade</span>
-                                </div>
-                                <span class="text-sm font-bold text-yellow-500">+$10.00</span>
-                            </label>
+                itemModal: $("#item-modal"),
+                itemModalTitle: $("#item-modal-title"),
+                itemModalBasePrice: $("#item-modal-base-price"),
+                itemModalOptions: $("#item-modal-options"),
+                itemModalTotalPrice: $("#item-modal-total-price"),
+                addToBookingButton: $("#add-to-booking-button"),
+
+                checkoutModal: $("#checkout-modal"),
+                checkoutForm: $("#checkout-form"),
+                bookingDate: $("#booking-date"),
+                timeSlots: $("#time-slots"),
+                timeError: $("#time-error"),
+                customerName: $("#customer-name"),
+                customerPhone: $("#customer-phone"),
+                cardElement: $("#card-element"),
+                cardErrors: $("#card-errors"),
+                checkoutError: $("#checkout-error"),
+                payButton: $("#pay-button"),
+                checkoutServicesTotal: $("#checkout-services-total"),
+                checkoutDeposit: $("#checkout-deposit"),
+                checkoutTotal: $("#checkout-total"),
+                checkoutSuccess: $("#checkout-success"),
+                successAppointment: $("#success-appointment"),
+                successReference: $("#success-reference"),
+                successCloseButton: $("#success-close-button"),
+
+                mobileMenuButton: $("#mobile-menu-button"),
+                mobileMenu: $("#mobile-menu"),
+                shopStatus: $("#shop-status"),
+                shopStatusText: $("#shop-status-text"),
+                copyrightYear: $("#copyright-year"),
+
+                chatPanel: $("#chat-panel"),
+                chatToggleButton: $("#chat-toggle-button"),
+                chatCloseButton: $("#chat-close-button"),
+                chatMessages: $("#chat-messages"),
+                chatTyping: $("#chat-typing"),
+                chatInput: $("#chat-input"),
+                chatSendButton: $("#chat-send-button"),
+
+                toast: $("#toast")
+            };
+
+            function formatMoney(value) {
+                return `$${Number(value).toFixed(2)}`;
+            }
+
+            function escapeHTML(value) {
+                return String(value)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+
+            function createId() {
+                if (window.crypto && typeof window.crypto.randomUUID === "function") {
+                    return window.crypto.randomUUID();
+                }
+
+                return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            }
+
+            function getSydneyDateParts(date = new Date()) {
+                const parts = new Intl.DateTimeFormat("en-AU", {
+                    timeZone: SHOP_TIME_ZONE,
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit"
+                }).formatToParts(date);
+
+                return Object.fromEntries(
+                    parts
+                        .filter((part) => part.type !== "literal")
+                        .map((part) => [part.type, part.value])
+                );
+            }
+
+            function getSydneyDateISO() {
+                const parts = getSydneyDateParts();
+
+                return `${parts.year}-${parts.month}-${parts.day}`;
+            }
+
+            function formatTimeLabel(time) {
+                const [hours, minutes] = time.split(":").map(Number);
+                const suffix = hours >= 12 ? "PM" : "AM";
+                const displayHour = hours % 12 || 12;
+
+                return `${displayHour}:${String(minutes).padStart(2, "0")} ${suffix}`;
+            }
+
+            function showToast(message) {
+                elements.toast.textContent = message;
+                elements.toast.classList.add("is-visible");
+
+                window.clearTimeout(showToast.timeoutId);
+                showToast.timeoutId = window.setTimeout(() => {
+                    elements.toast.classList.remove("is-visible");
+                }, 3200);
+            }
+
+            function setModalOpen(modal, open) {
+                modal.hidden = !open;
+                document.body.classList.toggle(
+                    "modal-open",
+                    !elements.itemModal.hidden || !elements.checkoutModal.hidden
+                );
+            }
+
+            function closeModalById(id) {
+                if (id === "item-modal") {
+                    setModalOpen(elements.itemModal, false);
+                    state.currentItem = null;
+                }
+
+                if (id === "checkout-modal") {
+                    setModalOpen(elements.checkoutModal, false);
+                }
+            }
+
+            function renderServiceMenu() {
+                const groupedServices = SERVICES.reduce((groups, service) => {
+                    if (!groups[service.category]) {
+                        groups[service.category] = [];
+                    }
+
+                    groups[service.category].push(service);
+                    return groups;
+                }, {});
+
+                elements.serviceGroups.replaceChildren();
+
+                Object.entries(groupedServices).forEach(([category, services]) => {
+                    const section = document.createElement("section");
+
+                    section.innerHTML = `
+                        <div class="flex flex-col justify-between gap-3 border-b border-white/10 pb-5 sm:flex-row sm:items-end">
+                            <div>
+                                <p class="section-kicker">Category</p>
+                                <h3 class="mt-2 font-display text-3xl font-bold tracking-[-0.03em] text-white">
+                                    ${escapeHTML(category)}
+                                </h3>
+                            </div>
+                            <p class="max-w-sm text-sm leading-6 text-slate-500">
+                                ${escapeHTML(CATEGORY_DESCRIPTIONS[category] || "")}
+                            </p>
                         </div>
-                    </div>
-                `;
+                    `;
+
+                    const grid = document.createElement("div");
+                    grid.className = "mt-6 grid gap-4 sm:grid-cols-2";
+
+                    services.forEach((service) => {
+                        const card = document.createElement("article");
+                        card.className = "service-card p-5";
+
+                        const displayedPrice = service.displayPrice || formatMoney(service.price);
+
+                        card.innerHTML = `
+                            <div>
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="service-icon">
+                                        <i class="fa-solid ${escapeHTML(service.icon)}"></i>
+                                    </div>
+                                    ${
+                                        service.badge
+                                            ? `<span class="border border-acid/20 bg-acid/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-acid">${escapeHTML(service.badge)}</span>`
+                                            : ""
+                                    }
+                                </div>
+
+                                <div class="mt-7 flex items-start justify-between gap-4">
+                                    <h4 class="font-display text-xl font-bold text-white">
+                                        ${escapeHTML(service.name)}
+                                    </h4>
+                                    <span class="shrink-0 font-display text-lg font-bold text-acid">
+                                        ${escapeHTML(displayedPrice)}
+                                    </span>
+                                </div>
+
+                                <p class="mt-3 text-sm leading-6 text-slate-500">
+                                    ${escapeHTML(service.description)}
+                                </p>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="ghost-button mt-7 flex w-full items-center justify-center gap-3 px-4 py-3 text-xs font-bold uppercase tracking-wider"
+                                data-service-id="${escapeHTML(service.id)}"
+                            >
+                                ${service.type === "retail" ? "Add to order" : "Select options"}
+                                <i class="fa-solid fa-arrow-right text-[10px] text-acid"></i>
+                            </button>
+                        `;
+
+                        grid.appendChild(card);
+                    });
+
+                    section.appendChild(grid);
+                    elements.serviceGroups.appendChild(section);
+                });
             }
 
-            if (type === 'haircut' || type === 'fade') {
-                html += `
-                    <div class="mb-6">
-                        <h4 class="font-bold text-slate-300 mb-3 text-sm uppercase tracking-wider">Hair Enhancements</h4>
-                        <div class="space-y-2">
-                            <label class="flex items-center justify-between p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
-                                <div class="flex items-center">
-                                    <input type="checkbox" value="5.00" data-name="Hard Part (Razor Line)" class="custom-chk h-4 w-4 rounded bg-slate-900 border-slate-600" onchange="updateModalPrice()">
-                                    <span class="ml-3 text-sm text-slate-300">Hard Part (Razor Line)</span>
-                                </div>
-                                <span class="text-sm font-bold text-yellow-500">+$5.00</span>
-                            </label>
-                            <label class="flex items-center justify-between p-3 border border-slate-700 bg-slate-800 rounded-sm cursor-pointer hover:border-yellow-500 transition">
-                                <div class="flex items-center">
-                                    <input type="checkbox" value="5.00" data-name="Hair Wash" class="custom-chk h-4 w-4 rounded bg-slate-900 border-slate-600" onchange="updateModalPrice()">
-                                    <span class="ml-3 text-sm text-slate-300">Hair Wash</span>
-                                </div>
-                                <span class="text-sm font-bold text-yellow-500">+$5.00</span>
-                            </label>
+            function getCustomizationMarkup(service) {
+                let markup = "";
+
+                if (service.type === "fade") {
+                    markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Fade type</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input
+                                            type="radio"
+                                            name="fade-type"
+                                            data-price="0"
+                                            data-label="Standard Fade"
+                                            checked
+                                        >
+                                        <span class="text-sm text-slate-300">Standard Fade</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-slate-500">Included</span>
+                                </label>
+
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input
+                                            type="radio"
+                                            name="fade-type"
+                                            data-price="10"
+                                            data-label="Skin Fade"
+                                        >
+                                        <span class="text-sm text-slate-300">Skin Fade</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-acid">+$10.00</span>
+                                </label>
+                            </div>
                         </div>
+                    `;
+                }
+
+                if (service.type === "haircut" || service.type === "fade") {
+                    markup += `
+                        <div>
+                            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Enhancements</h3>
+                            <div class="space-y-2">
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            data-price="5"
+                                            data-label="Hard Part Razor Line"
+                                        >
+                                        <span class="text-sm text-slate-300">Hard Part Razor Line</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-acid">+$5.00</span>
+                                </label>
+
+                                <label class="option-row p-3">
+                                    <span class="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            data-price="5"
+                                            data-label="Hair Wash"
+                                        >
+                                        <span class="text-sm text-slate-300">Hair Wash</span>
+                                    </span>
+                                    <span class="text-xs font-bold text-acid">+$5.00</span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (service.type === "grooming" || service.type === "threading" || service.type === "womens") {
+                    markup += `
+                        <div class="border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-slate-400">
+                            This service has no required add-ons. Add a note below if you have a specific request.
+                        </div>
+                    `;
+                }
+
+                if (service.type === "retail") {
+                    markup += `
+                        <div class="border border-acid/20 bg-acid/5 p-4 text-sm leading-6 text-acid">
+                            This retail item will be reserved for pickup at your appointment.
+                        </div>
+                    `;
+                }
+
+                markup += `
+                    <div>
+                        <label for="item-notes" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-400">
+                            Special requests
+                        </label>
+                        <textarea
+                            id="item-notes"
+                            class="service-textarea min-h-24 resize-y p-3 text-sm"
+                            placeholder="Example: Keep the top longer..."
+                        ></textarea>
                     </div>
                 `;
+
+                return markup;
             }
 
-            if (type === 'grooming' || type === 'threading') {
-                 html += `
-                    <div class="mb-6">
-                        <p class="text-sm text-slate-400 italic">No extra add-ons required for this service. Proceed to add notes if necessary.</p>
-                    </div>
-                `;
+            function getCustomizationSelection() {
+                const selectedInputs = $$("input[data-price]:checked", elements.itemModalOptions);
+                const options = selectedInputs.map((input) => input.dataset.label);
+                const extraPrice = selectedInputs.reduce(
+                    (total, input) => total + Number(input.dataset.price || 0),
+                    0
+                );
+
+                return {
+                    options,
+                    extraPrice
+                };
             }
 
-            if (type === 'retail') {
-                 html += `
-                    <div class="mb-6">
-                        <p class="text-sm text-yellow-500 font-bold italic">Retail items will be reserved and ready for pickup at your appointment.</p>
-                    </div>
-                `;
+            function updateItemModalPrice() {
+                if (!state.currentItem) {
+                    return;
+                }
+
+                const selection = getCustomizationSelection();
+                const total = state.currentItem.service.price + selection.extraPrice;
+
+                elements.itemModalTotalPrice.textContent = formatMoney(total);
             }
 
-            html += `
-                <div>
-                    <label class="block text-sm font-bold text-slate-300 mb-2 uppercase tracking-wider">Special Requests</label>
-                    <textarea id="modalItemNotes" rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-sm p-3 text-white focus:ring-1 focus:ring-yellow-500 focus:border-yellow-500 text-sm placeholder-slate-500" placeholder="E.g., Keep the top long..."></textarea>
-                </div>
-            `;
+            function openItemModal(serviceId) {
+                const service = SERVICES.find((item) => item.id === serviceId);
 
-            optionsContainer.innerHTML = html;
+                if (!service) {
+                    return;
+                }
 
-            const modal = document.getElementById('itemModal');
-            const content = document.getElementById('itemModalContent');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
-        }
+                state.currentItem = {
+                    service,
+                    selection: null
+                };
 
-        function closeItemModal() {
-            const modal = document.getElementById('itemModal');
-            const content = document.getElementById('itemModalContent');
-            
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
+                elements.itemModalTitle.textContent = service.name;
+                elements.itemModalBasePrice.textContent = formatMoney(service.price);
+                elements.itemModalTotalPrice.textContent = formatMoney(service.price);
+                elements.itemModalOptions.innerHTML = getCustomizationMarkup(service);
 
-        function updateModalPrice() {
-            let addedPrice = 0;
-            
-            const radios = document.querySelectorAll('#modalItemOptions input[type="radio"]:checked');
-            radios.forEach(r => { addedPrice += parseFloat(r.value); });
+                setModalOpen(elements.itemModal, true);
 
-            const checkboxes = document.querySelectorAll('#modalItemOptions .custom-chk:checked');
-            checkboxes.forEach(chk => { addedPrice += parseFloat(chk.value); });
-
-            currentItem.currentPrice = currentItem.basePrice + addedPrice;
-            document.getElementById('modalItemTotalPrice').innerText = formatMoney(currentItem.currentPrice);
-        }
-
-        function confirmItemAdd() {
-            const selectedOptions = [];
-            
-            const radios = document.querySelectorAll('#modalItemOptions input[type="radio"]:checked');
-            radios.forEach(r => {
-                if(parseFloat(r.value) > 0) { selectedOptions.push(r.getAttribute('data-name')); }
-            });
-
-            const checkboxes = document.querySelectorAll('#modalItemOptions .custom-chk:checked');
-            checkboxes.forEach(chk => {
-                selectedOptions.push(`+ ${chk.getAttribute('data-name')}`);
-            });
-
-            const notes = document.getElementById('modalItemNotes').value.trim();
-            if (notes) { selectedOptions.push(`Note: "${notes}"`); }
-
-            addToCart(currentItem.name, currentItem.currentPrice, selectedOptions);
-            closeItemModal();
-        }
-
-        // --- CHECKOUT MODAL LOGIC ---
-        function openCheckoutModal() {
-            if(cart.length === 0) return;
-            const modal = document.getElementById('checkoutModal');
-            const content = document.getElementById('modalContent');
-            
-            document.getElementById('modalBody').classList.remove('hidden');
-            const successEl = document.getElementById('modalSuccess');
-            if (successEl) {
-                successEl.classList.add('hidden');
-                successEl.classList.remove('flex', 'flex-col', 'scale-100');
+                window.requestAnimationFrame(() => {
+                    const firstInput = $("input, textarea, button", elements.itemModalOptions);
+                    firstInput?.focus();
+                });
             }
-            
-            modal.classList.remove('hidden');
-            initializeStripeUI();
 
-            setTimeout(() => {
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
-        }
+            function closeItemModal() {
+                closeModalById("item-modal");
+            }
 
-       function closeModal() {
-            const modal = document.getElementById('checkoutModal');
-            const content = document.getElementById('modalContent');
-            const successContent = document.getElementById('modalSuccess');
-            
-            if(content) {
-                content.classList.remove('scale-100');
-                content.classList.add('scale-95');
-            }
-            if(successContent && !successContent.classList.contains('hidden')){
-                 successContent.classList.remove('scale-100');
-                 successContent.classList.add('scale-95');
-            }
-            
-            // Reset the submit button back to normal when closing
-            const processBtn = document.querySelector('#stripe-submit-btn'); 
-            if(processBtn){
-                processBtn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
-                processBtn.disabled = false;
-            }
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
+            function addCurrentItemToCart() {
+                if (!state.currentItem) {
+                    return;
+                }
 
-        function resetAndClose() {
-            closeModal();
-            
-            setTimeout(() => {
-                cart = [];
-                baseTotal = 0;
+                const { service } = state.currentItem;
+                const selection = getCustomizationSelection();
+                const notes = $("#item-notes", elements.itemModalOptions)?.value.trim();
+                const options = [...selection.options];
+
+                if (notes) {
+                    options.push(`Note: ${notes}`);
+                }
+
+                state.cart.push({
+                    cartId: createId(),
+                    serviceId: service.id,
+                    name: service.name,
+                    price: service.price + selection.extraPrice,
+                    options
+                });
+
                 renderCart();
-                
-                document.getElementById('modalBody').classList.remove('hidden');
-                
-                const successEl = document.getElementById('modalSuccess');
-                successEl.classList.add('hidden');
-                successEl.classList.remove('flex', 'flex-col', 'scale-100');
-                
-                const processBtn = document.querySelector('#stripe-submit-btn'); 
-                if(processBtn){
-                    processBtn.innerHTML = '<i class="fas fa-lock text-sm mr-2"></i> Pay $10 Deposit & Book';
-                    processBtn.disabled = false;
-                }
-                
-                const displayError = document.getElementById('card-errors');
-                if(displayError) {
-                    displayError.textContent = '';
-                    displayError.classList.add('hidden');
-                }
-                if (cardElement) { cardElement.clear(); }
-
-            }, 500);
-        }
-
-        function updateShopAvailability() {
-            const now = new Date();
-            const hour = now.getHours();
-            const min = now.getMinutes();
-            const currentTime = hour + (min / 60);
-
-            let isOpen = false;
-            if (currentTime >= 9.5 && currentTime < 20.0) {
-                isOpen = true;
+                closeItemModal();
+                showToast(`${service.name} added to your booking.`);
             }
 
-            const shopStatus = document.getElementById('shopStatus');
-            if (shopStatus) {
-                if (isOpen) {
-                    shopStatus.innerHTML = '<i class="fas fa-circle text-green-500 text-[10px] mr-2"></i> Shop is Open';
-                    shopStatus.className = "inline-flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-sm text-slate-300 text-sm font-semibold transition-colors duration-300 shadow-inner";
+            function getCartSubtotal() {
+                return state.cart.reduce((total, item) => total + item.price, 0);
+            }
+
+            function getCartTotal() {
+                return state.cart.length > 0
+                    ? getCartSubtotal() + BOOKING_DEPOSIT
+                    : 0;
+            }
+
+            function renderCartItem(item) {
+                const wrapper = document.createElement("article");
+                wrapper.className = "cart-item flex items-start justify-between gap-3 p-3";
+
+                const content = document.createElement("div");
+                content.className = "min-w-0 flex-1";
+
+                const header = document.createElement("div");
+                header.className = "flex items-start justify-between gap-3";
+
+                const name = document.createElement("p");
+                name.className = "font-semibold leading-5 text-white";
+                name.textContent = item.name;
+
+                const price = document.createElement("span");
+                price.className = "shrink-0 text-sm font-bold text-acid";
+                price.textContent = formatMoney(item.price);
+
+                header.append(name, price);
+                content.appendChild(header);
+
+                if (item.options.length > 0) {
+                    const options = document.createElement("ul");
+                    options.className = "mt-2 space-y-1 text-xs leading-5 text-slate-500";
+
+                    item.options.forEach((option) => {
+                        const optionItem = document.createElement("li");
+                        optionItem.className = "flex gap-2";
+                        optionItem.innerHTML = `<span class="text-acid">+</span>`;
+                        const optionText = document.createElement("span");
+                        optionText.textContent = option;
+                        optionItem.appendChild(optionText);
+                        options.appendChild(optionItem);
+                    });
+
+                    content.appendChild(options);
+                }
+
+                const removeButton = document.createElement("button");
+                removeButton.type = "button";
+                removeButton.className = "grid h-8 w-8 shrink-0 place-items-center text-slate-600 transition hover:text-red-400";
+                removeButton.dataset.removeCartId = item.cartId;
+                removeButton.setAttribute("aria-label", `Remove ${item.name}`);
+                removeButton.innerHTML = `<i class="fa-solid fa-xmark text-xs"></i>`;
+
+                wrapper.append(content, removeButton);
+                return wrapper;
+            }
+
+            function renderCart() {
+                const subtotal = getCartSubtotal();
+                const total = getCartTotal();
+
+                elements.cartItems.replaceChildren();
+
+                state.cart.forEach((item) => {
+                    elements.cartItems.appendChild(renderCartItem(item));
+                });
+
+                elements.cartEmpty.hidden = state.cart.length > 0;
+                elements.cartCount.textContent = String(state.cart.length);
+                elements.cartSubtotal.textContent = formatMoney(subtotal);
+                elements.cartTotal.textContent = formatMoney(total);
+                elements.cartFeeRow.hidden = state.cart.length === 0;
+
+                elements.checkoutButton.disabled = state.cart.length === 0;
+
+                if (state.cart.length > 0) {
+                    elements.checkoutButton.className = "acid-button mt-6 flex w-full items-center justify-center gap-3 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide";
                 } else {
-                    shopStatus.innerHTML = '<i class="fas fa-circle text-red-500 text-[10px] mr-2"></i> Shop is Closed';
-                    shopStatus.className = "inline-flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-sm text-slate-500 text-sm font-semibold transition-colors duration-300 shadow-inner";
+                    elements.checkoutButton.className = "mt-6 flex w-full items-center justify-center gap-3 bg-white/10 px-5 py-4 font-display text-sm font-bold uppercase tracking-wide text-slate-500 transition disabled:cursor-not-allowed";
+                }
+
+                updateCheckoutSummary();
+            }
+
+            function removeCartItem(cartId) {
+                const index = state.cart.findIndex((item) => item.cartId === cartId);
+
+                if (index === -1) {
+                    return;
+                }
+
+                const removedItem = state.cart[index];
+                state.cart.splice(index, 1);
+                renderCart();
+                showToast(`${removedItem.name} removed.`);
+            }
+
+            function renderTimeSlots() {
+                elements.timeSlots.replaceChildren();
+
+                TIME_SLOTS.forEach((time) => {
+                    const label = document.createElement("label");
+                    label.className = "cursor-pointer";
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = "booking-time";
+                    input.value = time;
+                    input.className = "peer sr-only";
+
+                    const visual = document.createElement("span");
+                    visual.className = "block border border-white/10 bg-white/[0.03] px-2 py-3 text-center text-xs font-bold text-slate-300 transition hover:border-acid/50 peer-checked:border-acid peer-checked:bg-acid peer-checked:text-ink";
+                    visual.textContent = formatTimeLabel(time);
+
+                    label.append(input, visual);
+                    elements.timeSlots.appendChild(label);
+                });
+            }
+
+            function updateCheckoutSummary() {
+                const subtotal = getCartSubtotal();
+                const total = getCartTotal();
+
+                elements.checkoutServicesTotal.textContent = formatMoney(subtotal);
+                elements.checkoutDeposit.textContent = formatMoney(
+                    state.cart.length > 0 ? BOOKING_DEPOSIT : 0
+                );
+                elements.checkoutTotal.textContent = formatMoney(total);
+            }
+
+            function clearCheckoutErrors() {
+                elements.checkoutError.hidden = true;
+                elements.checkoutError.textContent = "";
+                elements.cardErrors.hidden = true;
+                elements.cardErrors.textContent = "";
+                elements.timeError.hidden = true;
+                elements.timeError.textContent = "";
+
+                [
+                    elements.bookingDate,
+                    elements.customerName,
+                    elements.customerPhone
+                ].forEach((element) => {
+                    element.removeAttribute("aria-invalid");
+                });
+            }
+
+            function showCheckoutError(message) {
+                elements.checkoutError.textContent = message;
+                elements.checkoutError.hidden = false;
+                elements.checkoutError.scrollIntoView({
+                    block: "nearest",
+                    behavior: "smooth"
+                });
+            }
+
+            function validateCheckout() {
+                clearCheckoutErrors();
+
+                const date = elements.bookingDate.value;
+                const selectedTime = $('input[name="booking-time"]:checked', elements.timeSlots);
+                const name = elements.customerName.value.trim();
+                const phone = elements.customerPhone.value.trim();
+
+                let valid = true;
+
+                if (!date || date < elements.bookingDate.min) {
+                    elements.bookingDate.setAttribute("aria-invalid", "true");
+                    valid = false;
+                }
+
+                if (!selectedTime) {
+                    elements.timeError.textContent = "Select an appointment time.";
+                    elements.timeError.hidden = false;
+                    valid = false;
+                }
+
+                if (name.length < 2) {
+                    elements.customerName.setAttribute("aria-invalid", "true");
+                    valid = false;
+                }
+
+                if (!/^[+0-9()\s-]{8,}$/.test(phone)) {
+                    elements.customerPhone.setAttribute("aria-invalid", "true");
+                    valid = false;
+                }
+
+                if (!valid) {
+                    showCheckoutError("Please complete the highlighted booking details.");
+                }
+
+                return valid;
+            }
+
+            function getBookingDetails() {
+                const selectedTime = $('input[name="booking-time"]:checked', elements.timeSlots);
+
+                return {
+                    date: elements.bookingDate.value,
+                    time: selectedTime?.value || "",
+                    timeLabel: selectedTime ? formatTimeLabel(selectedTime.value) : "",
+                    name: elements.customerName.value.trim(),
+                    phone: elements.customerPhone.value.trim()
+                };
+            }
+
+            function buildPaymentPayload() {
+                const booking = getBookingDetails();
+
+                return {
+                    amount: BOOKING_DEPOSIT_CENTS,
+                    currency: CONFIG.currency,
+                    booking,
+                    services: state.cart.map((item) => ({
+                        name: item.name,
+                        price: Math.round(item.price * 100),
+                        options: item.options
+                    }))
+                };
+            }
+
+            function mountStripeCard() {
+                if (state.stripeCard) {
+                    return true;
+                }
+
+                if (!window.Stripe) {
+                    showCheckoutError("Stripe.js could not be loaded. Check your network connection.");
+                    return false;
+                }
+
+                if (
+                    !CONFIG.stripePublishableKey ||
+                    CONFIG.stripePublishableKey.includes("pk_test_51UEq970ABvmtkKDIa58mliogDMSQhqlIS8PNGpOFvfOfW8jJzRpfUXFjZJBdOo6mGAe090LQRew7nSdtsL4CumDQ00yIQi5Ue2")
+                ) {
+                    showCheckoutError("Add your Stripe publishable key in CONFIG before accepting payments.");
+                    return false;
+                }
+
+                try {
+                    state.stripe = window.Stripe(CONFIG.stripePublishableKey);
+
+                    const stripeElements = state.stripe.elements();
+
+                    state.stripeCard = stripeElements.create("card", {
+                        hidePostalCode: true,
+                        style: {
+                            base: {
+                                color: "#f8fafc",
+                                fontFamily: '"DM Sans", sans-serif',
+                                fontSize: "14px",
+                                fontSmoothing: "antialiased",
+                                "::placeholder": {
+                                    color: "#687083"
+                                }
+                            },
+                            invalid: {
+                                color: "#ff7070",
+                                iconColor: "#ff7070"
+                            }
+                        }
+                    });
+
+                    state.stripeCard.mount("#card-element");
+
+                    state.stripeCard.on("change", (event) => {
+                        state.stripeCardComplete = event.complete;
+
+                        if (event.error) {
+                            elements.cardErrors.textContent = event.error.message;
+                            elements.cardErrors.hidden = false;
+                        } else {
+                            elements.cardErrors.textContent = "";
+                            elements.cardErrors.hidden = true;
+                        }
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error(error);
+                    showCheckoutError("Stripe could not be initialized. Verify the publishable key.");
+                    return false;
                 }
             }
-        }
 
-        updateShopAvailability();
-        setInterval(updateShopAvailability, 60000);
+            function openCheckout() {
+                if (state.cart.length === 0) {
+                    return;
+                }
 
-        // --- AI CHATBOT LOGIC ---
-        const chatWindow = document.getElementById('chat-window');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInput = document.getElementById('chat-input');
-        const chatTyping = document.getElementById('chat-typing');
+                elements.bookingDate.min = getSydneyDateISO();
+                updateCheckoutSummary();
+                clearCheckoutErrors();
+                setModalOpen(elements.checkoutModal, true);
+                mountStripeCard();
 
-        function toggleChat() {
-            if (chatWindow.classList.contains('hidden')) {
-                chatWindow.classList.remove('hidden');
-                setTimeout(() => {
-                    chatWindow.classList.remove('scale-95', 'opacity-0');
-                    chatWindow.classList.add('scale-100', 'opacity-100');
-                }, 10);
-                chatInput.focus();
-            } else {
-                chatWindow.classList.remove('scale-100', 'opacity-100');
-                chatWindow.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => {
-                    chatWindow.classList.add('hidden');
-                }, 300);
+                window.requestAnimationFrame(() => {
+                    elements.bookingDate.focus();
+                });
             }
-        }
 
-        function handleChatEnter(e) {
-            if (e.key === 'Enter') {
-                sendMessage();
+            function resetCheckoutView() {
+                elements.checkoutForm.hidden = false;
+                elements.checkoutSuccess.hidden = true;
+                elements.checkoutForm.reset();
+                elements.bookingDate.min = getSydneyDateISO();
+                clearCheckoutErrors();
+
+                if (state.stripeCard) {
+                    state.stripeCard.clear();
+                }
+
+                state.completedBooking = null;
             }
-        }
 
-        function appendMessage(text, isUser) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = isUser ? 'flex items-end justify-end max-w-[85%] self-end' : 'flex items-start max-w-[85%]';
-            
-            let innerHTML = '';
-            if (isUser) {
-                innerHTML = `
-                    <div class="bg-yellow-500 p-3 rounded-sm rounded-tr-none shadow-sm text-slate-900 text-sm font-medium">
-                        ${text}
-                    </div>
+            function closeCheckout() {
+                setModalOpen(elements.checkoutModal, false);
+
+                if (state.completedBooking) {
+                    resetCheckoutView();
+                }
+            }
+
+            function showBookingSuccess(paymentIntentId, booking) {
+                state.completedBooking = {
+                    paymentIntentId,
+                    booking
+                };
+
+                elements.successAppointment.textContent = `${booking.date} at ${booking.timeLabel}`;
+                elements.successReference.textContent = paymentIntentId
+                    ? `#${paymentIntentId.slice(-8).toUpperCase()}`
+                    : "Confirmed";
+
+                elements.checkoutForm.hidden = true;
+                elements.checkoutSuccess.hidden = false;
+
+                state.cart = [];
+                renderCart();
+            }
+
+            async function processPayment() {
+                if (state.isProcessingPayment) {
+                    return;
+                }
+
+                if (state.cart.length === 0 || !validateCheckout()) {
+                    return;
+                }
+
+                if (!mountStripeCard()) {
+                    return;
+                }
+
+                if (!state.stripeCardComplete) {
+                    elements.cardErrors.textContent = "Enter complete card details.";
+                    elements.cardErrors.hidden = false;
+                    return;
+                }
+
+                state.isProcessingPayment = true;
+                elements.payButton.disabled = true;
+                elements.payButton.innerHTML = `
+                    <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                    Processing payment...
                 `;
-            } else {
-                innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-yellow-500 mr-2 flex-shrink-0">
-                        <i class="fas fa-cut text-xs"></i>
-                    </div>
-                    <div class="bg-slate-800 p-3 rounded-sm rounded-tl-none border border-slate-700 shadow-sm text-slate-300 text-sm">
-                        ${text}
-                    </div>
-                `;
+
+                try {
+                    const response = await fetch(CONFIG.paymentIntentEndpoint, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(buildPaymentPayload())
+                    });
+
+                    const responseData = await response.json().catch(() => ({}));
+
+                    if (!response.ok) {
+                        throw new Error(
+                            responseData.error ||
+                            `Payment server returned HTTP ${response.status}.`
+                        );
+                    }
+
+                    const clientSecret =
+                        responseData.clientSecret ||
+                        responseData.client_secret;
+
+                    if (!clientSecret) {
+                        throw new Error("Payment server did not return a client secret.");
+                    }
+
+                    const booking = getBookingDetails();
+
+                    const result = await state.stripe.confirmCardPayment(clientSecret, {
+                        payment_method: {
+                            card: state.stripeCard,
+                            billing_details: {
+                                name: booking.name,
+                                phone: booking.phone
+                            }
+                        }
+                    });
+
+                    if (result.error) {
+                        throw new Error(result.error.message);
+                    }
+
+                    const paymentIntent = result.paymentIntent;
+
+                    if (
+                        !paymentIntent ||
+                        !["succeeded", "processing"].includes(paymentIntent.status)
+                    ) {
+                        throw new Error("Payment was not completed.");
+                    }
+
+                    showBookingSuccess(paymentIntent.id, booking);
+                } catch (error) {
+                    console.error(error);
+                    showCheckoutError(
+                        error.message ||
+                        "Payment failed. Check your details and try again."
+                    );
+                } finally {
+                    state.isProcessingPayment = false;
+                    elements.payButton.disabled = false;
+                    elements.payButton.innerHTML = `
+                        <i class="fa-solid fa-lock text-xs"></i>
+                        Pay $10 deposit and book
+                    `;
+                }
             }
-            
-            msgDiv.innerHTML = innerHTML;
-            chatMessages.appendChild(msgDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
 
-        function sendMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-            
-            appendMessage(text, true);
-            chatInput.value = '';
-            
-            chatTyping.classList.remove('hidden');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            setTimeout(() => {
-                chatTyping.classList.add('hidden');
-                generateBotResponse(text.toLowerCase());
-            }, 1000 + Math.random() * 1000); 
-        }
+            function updateShopStatus() {
+                const formatter = new Intl.DateTimeFormat("en-AU", {
+                    timeZone: SHOP_TIME_ZONE,
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false
+                });
 
-        function generateBotResponse(input) {
-            let response = "I'm the digital barber assistant. You can book an appointment above, or ask me about our prices and location in Harris Park!";
-            
-            if (input.includes('hour') || input.includes('time') || input.includes('open')) {
-                response = "We are open 7 days a week! Monday to Sunday from 9:30am to 8:00pm.";
-            } else if (input.includes('where') || input.includes('location') || input.includes('address') || input.includes('harris park')) {
-                response = "We are located right in the heart of Harris Park, NSW. Check the map at the bottom of the page!";
-            } else if (input.includes('walk') || input.includes('appointment') || input.includes('booking')) {
-                response = "We welcome walk-ins! However, if you book an appointment online via this website, there is a standard $10 appointment charge added to secure your spot.";
-            } else if (input.includes('price') || input.includes('cost') || input.includes('how much')) {
-                response = "Our Crew Cuts are $15, Style Cuts are $20, and Fades start at $25. A Beard Trim is $15. Select 'Book Appointment' to see the full menu.";
-            } else if (input.includes('fade') || input.includes('skin fade') || input.includes('zero')) {
-                response = "Fades start at $25. If you want a Skin Fade, it is an extra $10 (Total $35). You can select this option in the menu when booking.";
-            } else if (input.includes('beard') || input.includes('trim')) {
-                response = "A Beard Line Up is $10, a standard Beard Trim is $15, and a Full Beard sculpt is $20. We also offer beard colouring for $25!";
-            } else if (input.includes('threading') || input.includes('women')) {
-                response = "Yes! We offer Women's Cuts starting from $25, and various Threading services (Eyebrows $10, Cheeks $15, Full Face $30).";
-            } else if (input.includes('facial') || input.includes('massage')) {
-                response = "We do a great Head Massage for $20, a Scrub for $20, or a complete Premium Facial for $70 to keep you looking fresh.";
-            } else if (input.includes('contact') || input.includes('phone') || input.includes('call')) {
-                response = "You can call us directly at 02 9635 7773 or 0403 527 000.";
-            } else if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
-                response = "Welcome to Desi Boys Barber! Ready for a fresh cut? Let me know if you need help looking at the menu.";
+                const parts = formatter.formatToParts(new Date());
+                const hour = Number(parts.find((part) => part.type === "hour")?.value || 0);
+                const minute = Number(parts.find((part) => part.type === "minute")?.value || 0);
+                const decimalTime = hour + minute / 60;
+                const isOpen = decimalTime >= 9.5 && decimalTime < 20;
+
+                const dot = $(".status-dot", elements.shopStatus);
+
+                dot.classList.toggle("closed", !isOpen);
+                elements.shopStatusText.textContent = isOpen
+                    ? "Shop is open"
+                    : "Shop is closed";
             }
 
-            appendMessage(response, false);
-        }
+            function appendChatMessage(text, isUser = false) {
+                const wrapper = document.createElement("div");
+                wrapper.className = isUser
+                    ? "chat-message self-end"
+                    : "chat-message self-start";
+
+                const bubble = document.createElement("div");
+                bubble.className = isUser
+                    ? "bg-acid px-3 py-3 text-sm font-semibold leading-6 text-ink"
+                    : "border border-white/10 bg-panel2 px-3 py-3 text-sm leading-6 text-slate-300";
+
+                bubble.textContent = text;
+                wrapper.appendChild(bubble);
+                elements.chatMessages.appendChild(wrapper);
+                elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            }
+
+            function getBotResponse(input) {
+                if (input.includes("hour") || input.includes("open") || input.includes("time")) {
+                    return "We are open 7 days a week, Monday to Sunday, from 9:30am to 8:00pm.";
+                }
+
+                if (
+                    input.includes("where") ||
+                    input.includes("location") ||
+                    input.includes("address") ||
+                    input.includes("harris")
+                ) {
+                    return "We are in Harris Park, NSW. Scroll down to the location section for the map and contact details.";
+                }
+
+                if (
+                    input.includes("book") ||
+                    input.includes("appointment") ||
+                    input.includes("walk")
+                ) {
+                    return "Walk-ins are welcome. Online appointments require a $10 deposit to secure the chair.";
+                }
+
+                if (
+                    input.includes("price") ||
+                    input.includes("cost") ||
+                    input.includes("how much")
+                ) {
+                    return "Crew Cuts start at $15, Style Cuts are $20, Fades start at $25, and Beard Trims are $15.";
+                }
+
+                if (input.includes("fade")) {
+                    return "Fades start at $25. A Skin Fade adds $10, bringing that option to $35 before the online deposit.";
+                }
+
+                if (input.includes("beard") || input.includes("trim")) {
+                    return "Beard Line Ups are $10, Beard Trimming is $15, Full Beard sculpting is $20, and Colour is $25.";
+                }
+
+                if (input.includes("thread") || input.includes("women")) {
+                    return "Women Cuts start at $25. Threading services range from $10 for eyebrows to $30 for a full face.";
+                }
+
+                if (input.includes("facial") || input.includes("massage") || input.includes("scrub")) {
+                    return "Head Massage is $20, Scrub is $20, and the Premium Facial is $70.";
+                }
+
+                if (input.includes("phone") || input.includes("contact") || input.includes("call")) {
+                    return "You can call 02 9635 7773 or 0403 527 000.";
+                }
+
+                if (
+                    input.includes("hello") ||
+                    input.includes("hi") ||
+                    input.includes("hey")
+                ) {
+                    return "Welcome to Desi Boys Barber. Ask me about prices, opening hours, or booking.";
+                }
+
+                return "I can help with services, prices, opening hours, location, and booking details.";
+            }
+
+            function sendChatMessage() {
+                const text = elements.chatInput.value.trim();
+
+                if (!text) {
+                    return;
+                }
+
+                appendChatMessage(text, true);
+                elements.chatInput.value = "";
+                elements.chatTyping.hidden = false;
+
+                window.setTimeout(() => {
+                    elements.chatTyping.hidden = true;
+                    appendChatMessage(getBotResponse(text.toLowerCase()));
+                }, 650);
+            }
+
+            function toggleChat(forceOpen) {
+                const shouldOpen =
+                    typeof forceOpen === "boolean"
+                        ? forceOpen
+                        : elements.chatPanel.hidden;
+
+                elements.chatPanel.hidden = !shouldOpen;
+                elements.chatToggleButton.setAttribute("aria-expanded", String(shouldOpen));
+
+                if (shouldOpen) {
+                    elements.chatInput.focus();
+                }
+            }
+
+            function initNavigation() {
+                elements.mobileMenuButton.addEventListener("click", () => {
+                    const isOpen = !elements.mobileMenu.hidden;
+
+                    elements.mobileMenu.hidden = isOpen;
+                    elements.mobileMenuButton.setAttribute("aria-expanded", String(!isOpen));
+                    elements.mobileMenuButton.innerHTML = isOpen
+                        ? `<i class="fa-solid fa-bars"></i>`
+                        : `<i class="fa-solid fa-xmark"></i>`;
+                });
+
+                $$(".mobile-nav-link, #mobile-menu a[href='#services']").forEach((link) => {
+                    link.addEventListener("click", () => {
+                        elements.mobileMenu.hidden = true;
+                        elements.mobileMenuButton.setAttribute("aria-expanded", "false");
+                        elements.mobileMenuButton.innerHTML = `<i class="fa-solid fa-bars"></i>`;
+                    });
+                });
+            }
+
+            function initThreeBackground() {
+                const canvas = $("#hero-canvas");
+                const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+                if (!canvas || !window.THREE || reducedMotion) {
+                    return;
+                }
+
+                try {
+                    const scene = new THREE.Scene();
+                    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+                    camera.position.z = 7;
+
+                    const renderer = new THREE.WebGLRenderer({
+                        canvas,
+                        alpha: true,
+                        antialias: true,
+                        powerPreference: "low-power"
+                    });
+
+                    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+                    renderer.setClearColor(0x000000, 0);
+
+                    const group = new THREE.Group();
+                    scene.add(group);
+
+                    const coreGeometry = new THREE.IcosahedronGeometry(2.25, 2);
+                    const coreMaterial = new THREE.MeshBasicMaterial({
+                        color: 0xd9ff4f,
+                        wireframe: true,
+                        transparent: true,
+                        opacity: 0.12
+                    });
+
+                    const core = new THREE.Mesh(coreGeometry, coreMaterial);
+                    group.add(core);
+
+                    const ringGeometry = new THREE.TorusGeometry(2.9, 0.008, 8, 160);
+                    const ringMaterial = new THREE.MeshBasicMaterial({
+                        color: 0xf4c95d,
+                        transparent: true,
+                        opacity: 0.3
+                    });
+
+                    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+                    ring.rotation.x = Math.PI / 2.6;
+                    group.add(ring);
+
+                    const particleCount = window.innerWidth < 768 ? 90 : 160;
+                    const positions = new Float32Array(particleCount * 3);
+                    const colors = new Float32Array(particleCount * 3);
+                    const color = new THREE.Color();
+
+                    for (let index = 0; index < particleCount; index += 1) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = 2.8 + Math.random() * 2.9;
+                        const vertical = (Math.random() - 0.5) * 4.3;
+
+                        positions[index * 3] = Math.cos(angle) * radius;
+                        positions[index * 3 + 1] = vertical;
+                        positions[index * 3 + 2] = Math.sin(angle) * radius;
+
+                        color.setHSL(
+                            Math.random() > 0.58 ? 0.19 : 0.62,
+                            0.75,
+                            0.62
+                        );
+
+                        colors[index * 3] = color.r;
+                        colors[index * 3 + 1] = color.g;
+                        colors[index * 3 + 2] = color.b;
+                    }
+
+                    const particleGeometry = new THREE.BufferGeometry();
+                    particleGeometry.setAttribute(
+                        "position",
+                        new THREE.BufferAttribute(positions, 3)
+                    );
+                    particleGeometry.setAttribute(
+                        "color",
+                        new THREE.BufferAttribute(colors, 3)
+                    );
+
+                    const particleMaterial = new THREE.PointsMaterial({
+                        size: window.innerWidth < 768 ? 0.045 : 0.055,
+                        transparent: true,
+                        opacity: 0.74,
+                        vertexColors: true,
+                        depthWrite: false
+                    });
+
+                    const particles = new THREE.Points(
+                        particleGeometry,
+                        particleMaterial
+                    );
+
+                    scene.add(particles);
+
+                    const pointer = {
+                        x: 0,
+                        y: 0
+                    };
+
+                    window.addEventListener(
+                        "pointermove",
+                        (event) => {
+                            pointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
+                            pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
+                        },
+                        { passive: true }
+                    );
+
+                    function resize() {
+                        const rect = canvas.getBoundingClientRect();
+                        const width = Math.max(1, rect.width);
+                        const height = Math.max(1, rect.height);
+
+                        renderer.setSize(width, height, false);
+                        camera.aspect = width / height;
+                        camera.updateProjectionMatrix();
+                    }
+
+                    window.addEventListener("resize", resize, { passive: true });
+                    resize();
+
+                    renderer.setAnimationLoop((time) => {
+                        const elapsed = time * 0.0002;
+
+                        core.rotation.x = elapsed * 0.55;
+                        core.rotation.y = elapsed * 0.8;
+                        ring.rotation.z = elapsed * 0.5;
+
+                        group.position.x +=
+                            (pointer.x * 0.22 - group.position.x) * 0.025;
+                        group.position.y +=
+                            (-pointer.y * 0.13 - group.position.y) * 0.025;
+
+                        particles.rotation.y = elapsed * 0.18;
+                        particles.rotation.x = Math.sin(elapsed * 1.8) * 0.08;
+
+                        renderer.render(scene, camera);
+                    });
+                } catch (error) {
+                    console.warn("Three.js background disabled:", error);
+                    canvas.remove();
+                }
+            }
+
+            function initEventListeners() {
+                elements.serviceGroups.addEventListener("click", (event) => {
+                    const button = event.target.closest("[data-service-id]");
+
+                    if (!button) {
+                        return;
+                    }
+
+                    openItemModal(button.dataset.serviceId);
+                });
+
+                elements.itemModalOptions.addEventListener("input", updateItemModalPrice);
+                elements.addToBookingButton.addEventListener("click", addCurrentItemToCart);
+
+                elements.cartItems.addEventListener("click", (event) => {
+                    const button = event.target.closest("[data-remove-cart-id]");
+
+                    if (button) {
+                        removeCartItem(button.dataset.removeCartId);
+                    }
+                });
+
+                elements.checkoutButton.addEventListener("click", openCheckout);
+                elements.checkoutForm.addEventListener("submit", (event) => {
+                    event.preventDefault();
+                    processPayment();
+                });
+
+                elements.successCloseButton.addEventListener("click", closeCheckout);
+
+                document.addEventListener("click", (event) => {
+                    const closeTarget = event.target.closest("[data-close-modal]");
+
+                    if (closeTarget) {
+                        closeModalById(closeTarget.dataset.closeModal);
+                    }
+                });
+
+                document.addEventListener("keydown", (event) => {
+                    if (event.key !== "Escape") {
+                        return;
+                    }
+
+                    if (!elements.itemModal.hidden) {
+                        closeItemModal();
+                    } else if (!elements.checkoutModal.hidden) {
+                        closeCheckout();
+                    } else if (!elements.chatPanel.hidden) {
+                        toggleChat(false);
+                    }
+                });
+
+                elements.chatToggleButton.addEventListener("click", () => toggleChat());
+                elements.chatCloseButton.addEventListener("click", () => toggleChat(false));
+                elements.chatSendButton.addEventListener("click", sendChatMessage);
+
+                elements.chatInput.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+            }
+
+            function initChat() {
+                appendChatMessage(
+                    "Welcome to Desi Boys Barber. Ask me about prices, opening hours, location, or booking."
+                );
+            }
+
+            function init() {
+                elements.copyrightYear.textContent = String(new Date().getFullYear());
+
+                renderServiceMenu();
+                renderTimeSlots();
+                renderCart();
+                initNavigation();
+                initEventListeners();
+                initChat();
+                updateShopStatus();
+                initThreeBackground();
+
+                window.setInterval(updateShopStatus, 60_000);
+            }
+
+            init();
+        })();
     </script>
 </body>
 </html>
-
